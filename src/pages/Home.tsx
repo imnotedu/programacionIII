@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ArrowRight, ShoppingBag, Truck, Shield, Clock, Mail, Phone, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ShoppingBag, Truck, Shield, Clock } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
@@ -11,6 +11,14 @@ const Home: React.FC = () => {
   const { products } = useProducts();
   const featuredProducts = products.slice(0, 4);
   const saleProducts = products.filter((product) => product.isSale);
+  
+  /**
+   * REFERENCIAS Y ESTADOS PARA CARRUSEL DE MARCAS - DESHABILITADO
+   * 
+   * Estos elementos son necesarios para la funcionalidad del carrusel de marcas.
+   * ESTADO: COMENTADO - Se mantiene el código para referencia futura.
+   */
+  /*
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -25,6 +33,7 @@ const Home: React.FC = () => {
       carouselRef.current.scrollTo({ left: newScroll, behavior: 'smooth' });
     }
   };
+  */
 
   // Scroll suave a secciones cuando se navega con hash
   useEffect(() => {
@@ -61,6 +70,14 @@ const Home: React.FC = () => {
     },
   ];
 
+  /**
+   * CONFIGURACIÓN DE MARCAS - SECCIÓN DESHABILITADA
+   * 
+   * Array que contiene las marcas de suplementos deportivos.
+   * ESTADO: COMENTADO - Esta funcionalidad está deshabilitada pero se mantiene el código
+   * para referencia futura. Para reactivar, descomentar este array y la sección JSX más abajo.
+   */
+  /*
   const brands = [
     {
       name: "Optimum Nutrition",
@@ -95,6 +112,7 @@ const Home: React.FC = () => {
       logo: "https://www.cellucor.com/cdn/shop/files/cellucor-logo.png?v=1614353849"
     },
   ];
+  */
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -159,8 +177,8 @@ const Home: React.FC = () => {
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="section-title justify-center text-center">Productos Destacados</h2>
-                <p className="text-muted-foreground mt-2 text-center justify-center">
+                <h2 className="section-title justify-center text-center">Productos en Descuento</h2>
+                <p className="text-muted-foreground mt-2">
                   Las mejores ofertas y promociones
                 </p>
               </div>
@@ -199,7 +217,24 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* Marcas Section */}
+        {/* 
+          ============================================================================
+          SECCIÓN DE MARCAS - DESHABILITADA
+          ============================================================================
+          
+          Esta sección muestra un carrusel con las marcas de suplementos deportivos.
+          ESTADO: COMENTADO - La funcionalidad está deshabilitada pero se mantiene
+          el código para referencia futura.
+          
+          Para reactivar:
+          1. Descomentar el array 'brands' arriba
+          2. Descomentar las funciones 'scrollCarousel', 'carouselRef' e 'isPaused'
+          3. Descomentar esta sección JSX completa
+          4. Descomentar los imports: ChevronLeft, ChevronRight
+          5. Opcional: Descomentar el enlace en Header.tsx
+          ============================================================================
+        */}
+        {/*
         <section id="marcas" className="py-16 md:py-20 bg-muted scroll-mt-20">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
@@ -209,9 +244,7 @@ const Home: React.FC = () => {
               </p>
             </div>
 
-            {/* Carousel with Navigation */}
             <div className="relative">
-              {/* Left Arrow */}
               <button
                 onClick={() => scrollCarousel('left')}
                 className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-card border border-border rounded-full flex items-center justify-center shadow-lg hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 -ml-2 md:-ml-6"
@@ -220,7 +253,6 @@ const Home: React.FC = () => {
                 <ChevronLeft className="w-6 h-6" />
               </button>
 
-              {/* Right Arrow */}
               <button
                 onClick={() => scrollCarousel('right')}
                 className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-card border border-border rounded-full flex items-center justify-center shadow-lg hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 -mr-2 md:-mr-6"
@@ -229,7 +261,6 @@ const Home: React.FC = () => {
                 <ChevronRight className="w-6 h-6" />
               </button>
 
-              {/* Carousel Container */}
               <div
                 ref={carouselRef}
                 className="overflow-x-auto scrollbar-hide scroll-smooth px-8"
@@ -241,7 +272,6 @@ const Home: React.FC = () => {
                   className={`flex gap-6 py-4 ${!isPaused ? 'animate-carousel' : ''}`}
                   style={{ width: 'fit-content' }}
                 >
-                  {/* Marcas con logos */}
                   {[...brands, ...brands].map((brand, index) => (
                     <div
                       key={`brand-${index}`}
@@ -270,6 +300,7 @@ const Home: React.FC = () => {
             </div>
           </div>
         </section>
+        */}
 
         {/* Featured Products Section */}
         <section className="py-16 md:py-20">

@@ -74,11 +74,11 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-center gap-2 text-white/70 text-sm">
                 <Phone className="w-4 h-4 text-primary" />
-                +1 234 567 890
+                +58 412-4295661
               </li>
               <li className="flex items-center gap-2 text-white/70 text-sm">
                 <MapPin className="w-4 h-4 text-primary" />
-                Ciudad, País
+                Guarico, Venezuela
               </li>
             </ul>
             <div className="flex gap-4 mt-4">
@@ -88,16 +88,14 @@ const Footer: React.FC = () => {
               <a href="#" className="text-white/70 hover:text-primary transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="text-white/70 hover:text-primary transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
+             
             </div>
           </div>
         </div>
 
         <div className="border-t border-white/10 mt-10 pt-6 text-center">
           <p className="text-white/50 text-sm">
-            © 2025 PowerFit. Todos los derechos reservados.
+            © 2026 PowerFit. Todos los derechos reservados.
           </p>
         </div>
       </div>
