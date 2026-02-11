@@ -1,18 +1,26 @@
-import React from "react";
+import { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 interface ProtectedRouteProps {
-    children: React.ReactNode;
+    children: ReactNode;
+    requireAdmin?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-    const { isAuthenticated } = useAuth();
+const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
+    const { user, isAuthenticated, loading } = useAuth();
     const location = useLocation();
 
+    if (loading) {
+        return <div className="flex h-screen items-center justify-center">Cargando...</div>;
+    }
+
     if (!isAuthenticated) {
-        // Guardamos la ruta actual para redirigir después del login
-        return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    if (requireAdmin && user?.role !== 'admin') {
+        return <Navigate to="/access-denied" replace />;
     }
 
     return <>{children}</>;
