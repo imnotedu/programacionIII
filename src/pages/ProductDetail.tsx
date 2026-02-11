@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useProducts, Product } from '@/context/ProductContext';
+import { useProducts } from '@/context/ProductContext';
+import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ShoppingCart } from 'lucide-react';
@@ -49,7 +50,7 @@ const ProductDetail = () => {
             <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-white rounded-lg p-4 flex items-center justify-center">
                     <img
-                        src={product.imageUrl || '/placeholder.png'}
+                        src={product.image || '/placeholder.png'}
                         alt={product.name}
                         className="max-h-[500px] object-contain"
                     />
@@ -58,11 +59,28 @@ const ProductDetail = () => {
                 <div className="space-y-6">
                     <div>
                         <h1 className="text-3xl font-bold">{product.name}</h1>
-                        <p className="text-gray-500 mt-2">Código: {product.code}</p>
+                        {product.isNew && <span className="badge-new ml-2">Nuevo</span>}
+                        {product.isSale && <span className="badge-sale ml-2">Oferta</span>}
                     </div>
 
-                    <div className="text-4xl font-bold text-primary">
-                        ${product.price}
+                    <div className="space-y-2">
+                        {product.isSale && product.originalPrice ? (
+                            <>
+                                <div className="text-2xl text-gray-500 line-through">
+                                    ${product.originalPrice}
+                                </div>
+                                <div className="text-4xl font-bold text-primary">
+                                    ${product.price}
+                                </div>
+                                <div className="text-sm text-primary font-semibold">
+                                    Ahorra ${(product.originalPrice - product.price).toFixed(2)} ({Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF)
+                                </div>
+                            </>
+                        ) : (
+                            <div className="text-4xl font-bold text-primary">
+                                ${product.price}
+                            </div>
+                        )}
                     </div>
 
                     <div className="prose max-w-none">
@@ -71,16 +89,14 @@ const ProductDetail = () => {
                     </div>
 
                     <div className="border-t pt-6">
-                        <p className="mb-2"><strong>Categoría:</strong> {product.category}</p>
-                        <p className="mb-4"><strong>Stock Disponible:</strong> {product.stock}</p>
+                        <p className="mb-4"><strong>Categoría:</strong> {product.category}</p>
 
                         <Button
                             className="w-full md:w-auto"
                             onClick={handleAddToCart}
-                            disabled={product.stock <= 0}
                         >
                             <ShoppingCart className="mr-2 h-4 w-4" />
-                            {product.stock > 0 ? 'Agregar al Carrito' : 'Agotado'}
+                            Agregar al Carrito
                         </Button>
                     </div>
                 </div>
