@@ -1,20 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import { useToast } from "@/hooks/use-toast";
-
-// Definir tipos basados en el backend (ver product.controller.ts)
-export interface Product {
-    id: string;
-    name: string;
-    code: string;
-    price: number;
-    description: string;
-    category: string;
-    imageUrl?: string;
-    stock: number;
-    createdAt: string;
-    updatedAt: string;
-}
+import { Product } from '@/types';
 
 interface ProductContextType {
     products: Product[];
@@ -23,8 +10,8 @@ interface ProductContextType {
     getProductByCode: (code: string) => Promise<Product | null>;
     getProductById: (id: string) => Promise<Product | null>;
     refreshProducts: () => Promise<void>;
-    createProduct: (data: any) => Promise<void>;
-    updateProduct: (id: string, data: any) => Promise<void>;
+    addProduct: (data: Omit<Product, 'id'>) => Promise<void>;
+    updateProduct: (id: string, data: Partial<Product>) => Promise<void>;
     deleteProduct: (id: string) => Promise<void>;
 }
 
@@ -112,6 +99,16 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
         }
     };
 
+    const addProduct = async (data: Omit<Product, 'id'>) => {
+        // Crear un producto localmente (sin backend)
+        const newProduct: Product = {
+            id: Date.now().toString(),
+            ...data
+        };
+        setProducts(prev => [...prev, newProduct]);
+        toast({ title: "Éxito", description: "Producto agregado correctamente" });
+    };
+
     const updateProduct = async (id: string, data: any) => {
         try {
             const token = localStorage.getItem('token');
@@ -154,7 +151,7 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
             getProductByCode,
             getProductById,
             refreshProducts: fetchProducts,
-            createProduct,
+            addProduct,
             updateProduct,
             deleteProduct
         }}>
