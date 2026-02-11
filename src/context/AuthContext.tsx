@@ -1,157 +1,98 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { User } from "@/types";
+/**
+ * Authentication Context
+ * 
+ * Provides authentication state and methods throughout the application.
+ * Integrates with backend API for login, register, and session management.
+ */
 
-interface RegisteredUser {
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import * as authApi from '@/services/authApiService';
+
+interface User {
   id: string;
   email: string;
-  password: string;
   name: string;
-  createdAt: string;
+  level: 'admin' | 'usuario';
 }
 
 interface AuthContextType {
   user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string, name: string) => Promise<boolean>;
+  isAdmin: () => boolean;
+  login: (credentials: { email: string; password: string }) => Promise<void>;
+  register: (data: { name: string; email: string; password: string }) => Promise<void>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Funciones auxiliares para manejar usuarios en localStorage
-const getRegisteredUsers = (): RegisteredUser[] => {
-  try {
-    const users = localStorage.getItem("registeredUsers");
-    return users ? JSON.parse(users) : [];
-  } catch {
-    return [];
-  }
-};
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-const saveRegisteredUsers = (users: RegisteredUser[]): void => {
-  localStorage.setItem("registeredUsers", JSON.stringify(users));
-};
-
-const getCurrentUser = (): User | null => {
-  try {
-    const user = localStorage.getItem("currentUser");
-    return user ? JSON.parse(user) : null;
-  } catch {
-    return null;
-  }
-};
-
-const saveCurrentUser = (user: User | null): void => {
-  if (user) {
-    localStorage.setItem("currentUser", JSON.stringify(user));
-  } else {
-    localStorage.removeItem("currentUser");
-  }
-};
-
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // Inicializar con el usuario guardado en localStorage
-  const [user, setUser] = useState<User | null>(() => getCurrentUser());
-
-  // Guardar el usuario actual cuando cambie
+  // Cargar usuario del localStorage al iniciar
   useEffect(() => {
-    saveCurrentUser(user);
-  }, [user]);
-
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // Simulación de delay de red
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    // Obtener usuarios registrados
-    const registeredUsers = getRegisteredUsers();
-    
-    // Buscar usuario por email
-    const foundUser = registeredUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
-    
-    // Validar si el usuario existe
-    if (!foundUser) {
-      throw new Error("Usuario no encontrado. Por favor regístrate primero.");
-    }
-    
-    // Validar contraseña
-    if (foundUser.password !== password) {
-      throw new Error("Contraseña incorrecta");
-    }
-    
-    // Login exitoso
-    const userSession: User = {
-      id: foundUser.id,
-      email: foundUser.email,
-      name: foundUser.name,
+    const loadUser = () => {
+      const currentUser = authApi.getCurrentUser();
+      const currentToken = localStorage.getItem('token');
+      
+      if (currentUser && currentToken) {
+        setUser(currentUser);
+        setToken(currentToken);
+      }
     };
-    
-    setUser(userSession);
-    return true;
+
+    loadUser();
+  }, []);
+
+  const login = async (credentials: { email: string; password: string }) => {
+    try {
+      const response = await authApi.login(credentials);
+      setUser(response.user);
+      setToken(response.token);
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const register = async (email: string, password: string, name: string): Promise<boolean> => {
-    // Simulación de delay de red
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    // Obtener usuarios registrados
-    const registeredUsers = getRegisteredUsers();
-    
-    // Validar si el email ya está registrado
-    const emailExists = registeredUsers.some(u => u.email.toLowerCase() === email.toLowerCase());
-    
-    if (emailExists) {
-      throw new Error("Este correo electrónico ya está registrado");
+  const register = async (data: { name: string; email: string; password: string }) => {
+    try {
+      const response = await authApi.register(data);
+      setUser(response.user);
+      setToken(response.token);
+    } catch (error) {
+      throw error;
     }
-    
-    // Crear nuevo usuario
-    const newUser: RegisteredUser = {
-      id: Date.now().toString(),
-      email: email.toLowerCase(),
-      password,
-      name,
-      createdAt: new Date().toISOString(),
-    };
-    
-    // Guardar usuario
-    registeredUsers.push(newUser);
-    saveRegisteredUsers(registeredUsers);
-    
-    // Iniciar sesión automáticamente
-    const userSession: User = {
-      id: newUser.id,
-      email: newUser.email,
-      name: newUser.name,
-    };
-    
-    setUser(userSession);
-    return true;
   };
 
   const logout = () => {
+    authApi.logout();
     setUser(null);
-    saveCurrentUser(null);
+    setToken(null);
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        login,
-        register,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  const isAdmin = () => {
+    return user?.level === 'admin';
+  };
 
-export const useAuth = () => {
+  const value: AuthContextType = {
+    user,
+    token,
+    isAuthenticated: !!user && !!token,
+    isAdmin,
+    login,
+    register,
+    logout,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
