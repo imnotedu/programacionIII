@@ -1,28 +1,12 @@
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-  isNew?: boolean;
-  isSale?: boolean;
-  originalPrice?: number;
-}
+// Re-exportar tipos desde contexts o definir tipos globales
+// Esto ayuda a AdminProduct.tsx que importa Product desde "@/types"
 
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
+export type { Product } from '@/context/ProductContext';
+export type { CartItem } from '@/context/CartContext';
 
 export interface User {
   id: string;
   email: string;
-  name: string;
-}
-
-export interface AuthFormData {
-  email: string;
-  password: string;
+  role: 'admin' | 'user';
   name?: string;
 }

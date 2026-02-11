@@ -7,6 +7,7 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes';
 import productRoutes from './product.routes';
+import cartRoutes from './cart.routes';
 
 const router = Router();
 
@@ -16,11 +17,8 @@ router.use('/auth', authRoutes);
 // Rutas de productos
 router.use('/products', productRoutes);
 
-import cartRoutes from './cart.routes';
 // Rutas de carrito
 router.use('/cart', cartRoutes);
-
-// Rutas de health check
 
 // Ruta de health check
 router.get('/health', (req, res) => {
