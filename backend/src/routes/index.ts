@@ -16,6 +16,10 @@ router.use('/auth', authRoutes);
 // Rutas de productos
 router.use('/products', productRoutes);
 
+import cartRoutes from './cart.routes';
+// Rutas de carrito
+router.use('/cart', cartRoutes);
+
 // Rutas de health check
 
 // Ruta de health check
