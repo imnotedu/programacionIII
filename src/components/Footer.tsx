@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Dumbbell, Mail, Phone, MapPin, Instagram, Facebook } from "lucide-react";
+import { Dumbbell, Mail, Phone, MapPin, Instagram, Facebook, Twitter } from "lucide-react";
 
 const Footer: React.FC = () => {
   return (
-    <footer id="contacto" className="bg-charcoal text-white">
+    <footer className="bg-charcoal text-white">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo y descripción */}
@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
               </span>
             </Link>
             <p className="text-white/70 text-sm leading-relaxed">
-              Tu tienda de confianza para suplementos deportivos de alta calidad.
+              Tu tienda de confianza para suplementos deportivos de alta calidad. 
               Potencia tu rendimiento con los mejores productos.
             </p>
           </div>
@@ -88,7 +88,7 @@ const Footer: React.FC = () => {
               <a href="#" className="text-white/70 hover:text-primary transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-
+             
             </div>
           </div>
         </div>

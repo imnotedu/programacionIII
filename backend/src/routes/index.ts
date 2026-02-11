@@ -6,8 +6,15 @@
 
 import { Router } from 'express';
 import authRoutes from './auth.routes';
+import productRoutes from './product.routes';
+
+const router = Router();
+
 // Rutas de autenticación
 router.use('/auth', authRoutes);
+
+// Rutas de productos
+router.use('/products', productRoutes);
 
 // Rutas de health check
 

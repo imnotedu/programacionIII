@@ -1,12 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart, Star } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
-import { useAuth } from "@/context/AuthContext";
-import { useFavorites } from "@/context/FavoritesContext";
 import { toast } from "@/hooks/use-toast";
-import { getProductImage } from "@/utils/productHelpers";
 
 interface ProductCardProps {
   product: Product;
@@ -14,45 +10,21 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
-  const { isAuthenticated } = useAuth();
-  const { isFavorite, toggleFavorite } = useFavorites();
 
-  const handleAddToCart = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!isAuthenticated) {
-      toast({
-        title: "Inicia sesión",
-        description: "Debes iniciar sesión para agregar productos al carrito",
-        variant: "destructive",
-      });
-      return;
-    }
-    try {
-      await addToCart(product.id, 1);
-    } catch (error) {
-      // El error ya se maneja en el CartContext
-    }
+  const handleAddToCart = () => {
+    addToCart(product);
+    toast({
+      title: "Producto agregado",
+      description: `${product.name} se agregó al carrito`,
+    });
   };
-
-  const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleFavorite(product.id);
-  };
-
-  const isFav = isFavorite(product.id);
 
   return (
-    <Link
-      to={`/producto/${product.id}`}
-      className="card-product bg-card group block cursor-pointer relative"
-    >
+    <div className="card-product bg-card group">
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-muted">
         <img
-          src={getProductImage(product)}
+          src={product.image}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           onError={(e) => {
@@ -60,27 +32,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             target.src = "/placeholder.svg";
           }}
         />
-
+        
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {product.isNew && <span className="badge-new">Nuevo</span>}
           {product.isSale && <span className="badge-sale">Oferta</span>}
-        </div>
-
-        {/* Action Buttons Container */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2">
-          {/* Favorite Button */}
-          <button
-            onClick={handleToggleFavorite}
-            className={`w-9 h-9 rounded-full flex items-center justify-center shadow-sm transition-all duration-300 
-              ${isFav
-                ? "bg-red-500 text-white"
-                : "bg-background/80 text-foreground hover:bg-background hover:scale-110"
-              }`}
-          >
-            <Heart className={`w-5 h-5 ${isFav ? "fill-current" : ""}`} />
-            <span className="sr-only">Añadir a favoritos</span>
-          </button>
         </div>
 
         {/* Quick Add Button - Mobile visible, Desktop on hover */}
@@ -100,14 +56,27 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <span className="text-xs text-primary font-medium uppercase tracking-wide">
           {product.category}
         </span>
-
+        
         <h3 className="font-semibold text-foreground mt-1 line-clamp-1">
           {product.name}
         </h3>
-
+        
         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
           {product.description}
         </p>
+
+        {/* Rating placeholder */}
+        <div className="flex items-center gap-1 mt-2">
+          {[...Array(5)].map((_, i) => (
+            <Star
+              key={i}
+              className={`w-3.5 h-3.5 ${
+                i < 4 ? "text-warning fill-warning" : "text-muted"
+              }`}
+            />
+          ))}
+          <span className="text-xs text-muted-foreground ml-1">(4.0)</span>
+        </div>
 
         {/* Price */}
         <div className="flex items-center gap-2 mt-3">
@@ -130,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           Agregar al carrito
         </button>
       </div>
-    </Link>
+    </div>
   );
 };
 

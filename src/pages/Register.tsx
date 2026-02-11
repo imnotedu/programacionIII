@@ -3,36 +3,30 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ArrowLeft, Dumbbell, Check, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "@/schemas/authSchemas";
-import { RegisterData, UserLevel } from "@/types/auth";
-import { z } from "zod";
-
-// Tipo para el formulario que incluye confirmPassword
-type RegisterFormData = z.infer<typeof registerSchema>;
 
 const Register: React.FC = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { register: registerUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const { register } = useAuth();
   const navigate = useNavigate();
 
-  // Configurar react-hook-form con Zod schema
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors, isSubmitting }
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-    mode: "onChange" // Validación en tiempo real
-  });
+  // Validaciones de formato
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
-  // Observar el valor de password para mostrar indicadores de fortaleza
-  const password = watch("password", "");
+  const validateName = (name: string): boolean => {
+    // Al menos 2 caracteres, solo letras y espacios
+    const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/;
+    return nameRegex.test(name.trim());
+  };
 
-  // Validación de fortaleza de contraseña para UI (solo informativa)
   const validatePasswordStrength = (password: string): {
     isValid: boolean;
     checks: {
@@ -43,32 +37,102 @@ const Register: React.FC = () => {
     };
   } => {
     const checks = {
-      length: password.length >= 6, // Requisito mínimo: 6 caracteres
+      length: password.length >= 8,
       uppercase: /[A-Z]/.test(password),
       lowercase: /[a-z]/.test(password),
       number: /[0-9]/.test(password),
     };
 
-    // Solo el requisito de longitud es obligatorio
-    const isValid = checks.length;
+    const isValid = Object.values(checks).every(check => check);
 
     return { isValid, checks };
   };
 
   const passwordStrength = validatePasswordStrength(password);
 
-  // Manejador de envío del formulario
-  const onSubmit = async (data: RegisterFormData) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validación de campos vacíos
+    if (!name.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa tu nombre completo",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!email.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa tu correo electrónico",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!password) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa una contraseña",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Por favor confirma tu contraseña",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validación de nombre
+    if (!validateName(name)) {
+      toast({
+        title: "Error",
+        description: "El nombre debe tener al menos 2 caracteres y solo puede contener letras",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validación de formato de email
+    if (!validateEmail(email)) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa un correo electrónico válido",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validación de fortaleza de contraseña
+    if (!passwordStrength.isValid) {
+      toast({
+        title: "Error",
+        description: "La contraseña no cumple con los requisitos de seguridad",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validación de coincidencia de contraseñas
+    if (password !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Las contraseñas no coinciden",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      // Todos los usuarios registrados son de nivel "usuario"
-      const registerData: RegisterData = {
-        email: data.email,
-        password: data.password,
-        name: data.name,
-        level: 'usuario' // Siempre usuario para registros normales
-      };
-      
-      await registerUser(registerData);
+      await register(email.trim(), password, name.trim());
       toast({
         title: "¡Cuenta creada!",
         description: "Tu cuenta ha sido creada exitosamente",
@@ -80,6 +144,8 @@ const Register: React.FC = () => {
         description: error instanceof Error ? error.message : "No se pudo crear la cuenta",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -127,8 +193,7 @@ const Register: React.FC = () => {
             Completa el formulario para registrarte
           </p>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Campo de Nombre */}
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
                 Nombre completo
@@ -136,19 +201,19 @@ const Register: React.FC = () => {
               <input
                 id="name"
                 type="text"
-                {...register("name")}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Tu nombre"
                 className="input-field"
-                disabled={isSubmitting}
+                disabled={isLoading}
               />
-              {errors.name && (
+              {name && !validateName(name) && (
                 <p className="text-xs text-destructive mt-1">
-                  {errors.name.message}
+                  El nombre debe tener al menos 2 caracteres y solo letras
                 </p>
               )}
             </div>
 
-            {/* Campo de Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                 Correo electrónico
@@ -156,19 +221,19 @@ const Register: React.FC = () => {
               <input
                 id="email"
                 type="email"
-                {...register("email")}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@email.com"
                 className="input-field"
-                disabled={isSubmitting}
+                disabled={isLoading}
               />
-              {errors.email && (
+              {email && !validateEmail(email) && (
                 <p className="text-xs text-destructive mt-1">
-                  {errors.email.message}
+                  Por favor ingresa un correo electrónico válido
                 </p>
               )}
             </div>
 
-            {/* Campo de Contraseña */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
                 Contraseña
@@ -177,10 +242,11 @@ const Register: React.FC = () => {
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  {...register("password")}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="input-field pr-12"
-                  disabled={isSubmitting}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -205,15 +271,14 @@ const Register: React.FC = () => {
                       <X className="w-3 h-3 text-destructive" />
                     )}
                     <span className={passwordStrength.checks.length ? "text-success" : "text-muted-foreground"}>
-                      Mínimo 6 caracteres (requerido)
+                      Mínimo 8 caracteres
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">Recomendado para mayor seguridad:</p>
                   <div className="flex items-center gap-2 text-xs">
                     {passwordStrength.checks.uppercase ? (
                       <Check className="w-3 h-3 text-success" />
                     ) : (
-                      <X className="w-3 h-3 text-muted-foreground" />
+                      <X className="w-3 h-3 text-destructive" />
                     )}
                     <span className={passwordStrength.checks.uppercase ? "text-success" : "text-muted-foreground"}>
                       Una letra mayúscula
@@ -223,7 +288,7 @@ const Register: React.FC = () => {
                     {passwordStrength.checks.lowercase ? (
                       <Check className="w-3 h-3 text-success" />
                     ) : (
-                      <X className="w-3 h-3 text-muted-foreground" />
+                      <X className="w-3 h-3 text-destructive" />
                     )}
                     <span className={passwordStrength.checks.lowercase ? "text-success" : "text-muted-foreground"}>
                       Una letra minúscula
@@ -233,7 +298,7 @@ const Register: React.FC = () => {
                     {passwordStrength.checks.number ? (
                       <Check className="w-3 h-3 text-success" />
                     ) : (
-                      <X className="w-3 h-3 text-muted-foreground" />
+                      <X className="w-3 h-3 text-destructive" />
                     )}
                     <span className={passwordStrength.checks.number ? "text-success" : "text-muted-foreground"}>
                       Un número
@@ -241,14 +306,8 @@ const Register: React.FC = () => {
                   </div>
                 </div>
               )}
-              {errors.password && (
-                <p className="text-xs text-destructive mt-1">
-                  {errors.password.message}
-                </p>
-              )}
             </div>
 
-            {/* Campo de Confirmar Contraseña */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground mb-2">
                 Confirmar contraseña
@@ -257,10 +316,11 @@ const Register: React.FC = () => {
                 <input
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
-                  {...register("confirmPassword")}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
                   className="input-field pr-12"
-                  disabled={isSubmitting}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -274,19 +334,19 @@ const Register: React.FC = () => {
                   )}
                 </button>
               </div>
-              {errors.confirmPassword && (
+              {confirmPassword && password !== confirmPassword && (
                 <p className="text-xs text-destructive mt-1">
-                  {errors.confirmPassword.message}
+                  Las contraseñas no coinciden
                 </p>
               )}
             </div>
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isLoading}
               className="btn-primary w-full"
             >
-              {isSubmitting ? "Creando cuenta..." : "Crear cuenta"}
+              {isLoading ? "Creando cuenta..." : "Crear cuenta"}
             </button>
           </form>
 

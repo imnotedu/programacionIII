@@ -3,13 +3,12 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Eye, EyeOff, ArrowLeft, Dumbbell } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema } from "@/schemas/authSchemas";
-import { LoginCredentials } from "@/types/auth";
 
 const Login: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,20 +16,46 @@ const Login: React.FC = () => {
   // Obtener la ruta de retorno si viene del ProtectedRoute
   const from = location.state?.from || "/";
 
-  // Configurar react-hook-form con Zod schema
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting }
-  } = useForm<LoginCredentials>({
-    resolver: zodResolver(loginSchema),
-    mode: "onChange" // Validación en tiempo real
-  });
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
-  // Manejador de envío del formulario
-  const onSubmit = async (data: LoginCredentials) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validación de campos vacíos
+    if (!email.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa tu correo electrónico",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!password) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa tu contraseña",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validación de formato de email
+    if (!validateEmail(email)) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa un correo electrónico válido",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      await login(data);
+      await login(email.trim(), password);
       toast({
         title: "¡Bienvenido!",
         description: "Has iniciado sesión correctamente",
@@ -42,6 +67,8 @@ const Login: React.FC = () => {
         description: error instanceof Error ? error.message : "Credenciales incorrectas",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -74,8 +101,7 @@ const Login: React.FC = () => {
             Ingresa tus credenciales para acceder a tu cuenta
           </p>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Campo de Email */}
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                 Correo electrónico
@@ -83,19 +109,14 @@ const Login: React.FC = () => {
               <input
                 id="email"
                 type="email"
-                {...register("email")}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@email.com"
                 className="input-field"
-                disabled={isSubmitting}
+                disabled={isLoading}
               />
-              {errors.email && (
-                <p className="text-xs text-destructive mt-1">
-                  {errors.email.message}
-                </p>
-              )}
             </div>
 
-            {/* Campo de Contraseña */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
                 Contraseña
@@ -104,10 +125,11 @@ const Login: React.FC = () => {
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  {...register("password")}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="input-field pr-12"
-                  disabled={isSubmitting}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -121,19 +143,14 @@ const Login: React.FC = () => {
                   )}
                 </button>
               </div>
-              {errors.password && (
-                <p className="text-xs text-destructive mt-1">
-                  {errors.password.message}
-                </p>
-              )}
             </div>
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isLoading}
               className="btn-primary w-full"
             >
-              {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
+              {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
             </button>
           </form>
 

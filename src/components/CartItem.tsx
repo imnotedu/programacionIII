@@ -2,7 +2,6 @@ import React from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { CartItem as CartItemType } from "@/types";
 import { useCart } from "@/context/CartContext";
-import { getProductImage } from "@/utils/productHelpers";
 
 interface CartItemProps {
   item: CartItemType;
@@ -17,7 +16,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       {/* Image */}
       <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden bg-muted flex-shrink-0">
         <img
-          src={getProductImage(product)}
+          src={product.image}
           alt={product.name}
           className="w-full h-full object-cover"
           onError={(e) => {
