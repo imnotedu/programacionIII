@@ -20,34 +20,33 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 
-<AuthProvider>
-  <ProductProvider>
-    <FavoritesProvider>
-      <CartProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/tienda" element={<Store />} />
-              <Route path="/producto/:id" element={<ProductDetail />} />
-              <Route path="/favoritos" element={<Favorites />} />
-              <Route path="/carrito" element={<Cart />} />
-              <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/admin-products" element={<ProtectedRoute requireAdmin><AdminProduct /></ProtectedRoute>} />
-              <Route path="/access-denied" element={<AccessDenied />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </CartProvider>
-    </FavoritesProvider>
-  </ProductProvider>
-</AuthProvider>
-  </QueryClientProvider >
+<QueryClientProvider>
+  <AuthProvider>
+    <ProductProvider>
+      <FavoritesProvider>
+        <CartProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/tienda" element={<Store />} />
+                <Route path="/producto/:id" element={<ProductDetail />} />
+                <Route path="/favoritos" element={<Favorites />} />
+                <Route path="/carrito" element={<Cart />} />
+                <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/admin-products" element={<ProtectedRoute requireAdmin><AdminProduct /></ProtectedRoute>} />
+                <Route path="/access-denied" element={<AccessDenied />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </CartProvider>
+      </FavoritesProvider>
+    </ProductProvider>
+  </AuthProvider>
+</QueryClientProvider>
 );
-
-
