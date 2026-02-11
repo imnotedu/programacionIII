@@ -38,7 +38,7 @@ export interface JWTPayload {
 export function generateToken(payload: JWTPayload): string {
   return jwt.sign(payload, config.jwtSecret, {
     expiresIn: config.jwtExpiresIn
-  });
+  } as jwt.SignOptions);
 }
 
 /**
