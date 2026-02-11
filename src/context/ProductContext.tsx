@@ -1,65 +1,164 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { Product } from "@/types";
-import { products as initialProducts } from "@/data/products";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import axios from 'axios';
+import { useToast } from "@/hooks/use-toast";
+
+// Definir tipos basados en el backend (ver product.controller.ts)
+export interface Product {
+    id: string;
+    name: string;
+    code: string;
+    price: number;
+    description: string;
+    category: string;
+    imageUrl?: string;
+    stock: number;
+    createdAt: string;
+    updatedAt: string;
+}
 
 interface ProductContextType {
     products: Product[];
-    addProduct: (product: Omit<Product, "id">) => void;
-    updateProduct: (id: string, product: Omit<Product, "id">) => void;
-    deleteProduct: (id: string) => void;
+    loading: boolean;
+    error: string | null;
+    getProductByCode: (code: string) => Promise<Product | null>;
+    getProductById: (id: string) => Promise<Product | null>;
+    refreshProducts: () => Promise<void>;
+    createProduct: (data: any) => Promise<void>;
+    updateProduct: (id: string, data: any) => Promise<void>;
+    deleteProduct: (id: string) => Promise<void>;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
-export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // 1. Inicializamos el estado buscando en localStorage primero
-    const [products, setProducts] = useState<Product[]>(() => {
+export const useProducts = () => {
+    const context = useContext(ProductContext);
+    if (!context) {
+        throw new Error("useProducts must be used within a ProductProvider");
+    }
+    return context;
+};
+
+interface ProductProviderProps {
+    children: ReactNode;
+}
+
+export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const { toast } = useToast();
+
+    const fetchProducts = async () => {
         try {
-            const storedProducts = localStorage.getItem("products");
-            // Si hay datos guardados, los usamos. Si no, usamos los de products.ts
-            return storedProducts ? JSON.parse(storedProducts) : initialProducts;
-        } catch {
-            // Si hay error al parsear, usamos los productos por defecto
-            return initialProducts;
+            setLoading(true);
+            const response = await axios.get('http://localhost:5000/api/products');
+            if (response.data.success) {
+                setProducts(response.data.data.products);
+                setError(null);
+            }
+        } catch (err: any) {
+            console.error("Error fetching products:", err);
+            setError(err.response?.data?.message || "Error al cargar productos");
+            // No mostrar toast aquí para no spammear al inicio
+        } finally {
+            setLoading(false);
         }
-    });
+    };
 
-    // 2. Cada vez que 'products' cambie, actualizamos el localStorage
     useEffect(() => {
-        localStorage.setItem("products", JSON.stringify(products));
-    }, [products]);
+        fetchProducts();
+    }, []);
 
-    const addProduct = (newProductData: Omit<Product, "id">) => {
-        const newProduct: Product = {
-            ...newProductData,
-            id: Date.now().toString(), // Generamos ID único basado en la fecha
-        };
-        setProducts((prev) => [newProduct, ...prev]); // Agregamos al principio
+    const getProductByCode = async (code: string): Promise<Product | null> => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/products/code/${code}`);
+            if (response.data.success) {
+                return response.data.data.product;
+            }
+            return null;
+        } catch (error) {
+            console.error("Error getting product by code:", error);
+            return null;
+        }
     };
 
-    const updateProduct = (id: string, updatedProductData: Omit<Product, "id">) => {
-        setProducts((prev) =>
-            prev.map((product) =>
-                product.id === id ? { ...updatedProductData, id } : product
-            )
-        );
+    const getProductById = async (id: string): Promise<Product | null> => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+            if (response.data.success) {
+                return response.data.data.product;
+            }
+            return null;
+        } catch (error) {
+            console.error("Error getting product by id:", error);
+            return null;
+        }
+    }
+
+    const createProduct = async (data: any) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post('http://localhost:5000/api/products', data, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.data.success) {
+                toast({ title: "Éxito", description: "Producto creado correctamente" });
+                await fetchProducts();
+            }
+        } catch (err: any) {
+            const msg = err.response?.data?.message || "Error al crear producto";
+            toast({ title: "Error", description: msg, variant: "destructive" });
+            throw err;
+        }
     };
 
-    const deleteProduct = (id: string) => {
-        setProducts((prev) => prev.filter((p) => p.id !== id));
+    const updateProduct = async (id: string, data: any) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.put(`http://localhost:5000/api/products/${id}`, data, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.data.success) {
+                toast({ title: "Éxito", description: "Producto actualizado correctamente" });
+                await fetchProducts();
+            }
+        } catch (err: any) {
+            const msg = err.response?.data?.message || "Error al actualizar producto";
+            toast({ title: "Error", description: msg, variant: "destructive" });
+            throw err;
+        }
+    };
+
+    const deleteProduct = async (id: string) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:5000/api/products/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.data.success) {
+                toast({ title: "Éxito", description: "Producto eliminado correctamente" });
+                await fetchProducts();
+            }
+        } catch (err: any) {
+            const msg = err.response?.data?.message || "Error al eliminar producto";
+            toast({ title: "Error", description: msg, variant: "destructive" });
+            throw err;
+        }
     };
 
     return (
-        <ProductContext.Provider value={{ products, addProduct, updateProduct, deleteProduct }}>
+        <ProductContext.Provider value={{
+            products,
+            loading,
+            error,
+            getProductByCode,
+            getProductById,
+            refreshProducts: fetchProducts,
+            createProduct,
+            updateProduct,
+            deleteProduct
+        }}>
             {children}
         </ProductContext.Provider>
     );
-};
-
-export const useProducts = () => {
-    const context = useContext(ProductContext);
-    if (context === undefined) {
-        throw new Error("useProducts debe usarse dentro de un ProductProvider");
-    }
-    return context;
 };
