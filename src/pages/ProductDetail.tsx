@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProducts, Product } from '@/context/ProductContext';
+import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ShoppingCart } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 
 const ProductDetail = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { getProductById } = useProducts();
+    const { addToCart } = useCart();
+    const { toast } = useToast();
+
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -22,6 +26,16 @@ const ProductDetail = () => {
         };
         fetchProduct();
     }, [id, getProductById]);
+
+    const handleAddToCart = () => {
+        if (product) {
+            addToCart(product);
+            toast({
+                title: "Producto agregado",
+                description: `${product.name} se agregó al carrito.`
+            });
+        }
+    };
 
     if (loading) return <div className="container mx-auto p-8">Cargando...</div>;
     if (!product) return <div className="container mx-auto p-8">Producto no encontrado</div>;
@@ -60,12 +74,13 @@ const ProductDetail = () => {
                         <p className="mb-2"><strong>Categoría:</strong> {product.category}</p>
                         <p className="mb-4"><strong>Stock Disponible:</strong> {product.stock}</p>
 
-                        {/* 
-                  Nota: La funcionalidad de agregar al carrito 
-                  se implementará en la siguiente evaluación (feature/cart).
-                */}
-                        <Button className="w-full md:w-auto" disabled>
-                            Agregar al Carrito (Próximamente)
+                        <Button
+                            className="w-full md:w-auto"
+                            onClick={handleAddToCart}
+                            disabled={product.stock <= 0}
+                        >
+                            <ShoppingCart className="mr-2 h-4 w-4" />
+                            {product.stock > 0 ? 'Agregar al Carrito' : 'Agotado'}
                         </Button>
                     </div>
                 </div>
