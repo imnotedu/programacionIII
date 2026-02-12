@@ -5,13 +5,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/context/ProductContext";
+import { useAuth } from "@/context/AuthContext";
 
 const Home: React.FC = () => {
   const location = useLocation();
   const { products } = useProducts();
+  const { isAuthenticated } = useAuth();
   const featuredProducts = products.slice(0, 4);
   const saleProducts = products.filter((product) => product.isSale);
-  
+
   /**
    * REFERENCIAS Y ESTADOS PARA CARRUSEL DE MARCAS - DESHABILITADO
    * 
@@ -142,9 +144,11 @@ const Home: React.FC = () => {
                   Ver productos
                   <ArrowRight className="w-5 h-5" />
                 </Link>
-                <Link to="/register" className="btn-secondary inline-flex items-center justify-center">
-                  Crear cuenta
-                </Link>
+                {!isAuthenticated && (
+                  <Link to="/register" className="btn-secondary inline-flex items-center justify-center">
+                    Crear cuenta
+                  </Link>
+                )}
               </div>
             </div>
           </div>
@@ -172,138 +176,8 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* Destacados Section */}
-        <section id="destacados" className="py-16 md:py-20 scroll-mt-20">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h2 className="section-title justify-center text-center">Productos en Descuento</h2>
-                <p className="text-muted-foreground mt-2">
-                  Las mejores ofertas y promociones
-                </p>
-              </div>
-              <Link
-                to="/tienda"
-                className="hidden md:flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
-              >
-                Ver todos
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            {saleProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {saleProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-
-            <div className="mt-8 text-center md:hidden">
-              <Link
-                to="/tienda"
-                className="btn-primary inline-flex items-center gap-2"
-              >
-                Ver todos los productos
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* 
-          ============================================================================
-          SECCIÓN DE MARCAS - DESHABILITADA
-          ============================================================================
-          
-          Esta sección muestra un carrusel con las marcas de suplementos deportivos.
-          ESTADO: COMENTADO - La funcionalidad está deshabilitada pero se mantiene
-          el código para referencia futura.
-          
-          Para reactivar:
-          1. Descomentar el array 'brands' arriba
-          2. Descomentar las funciones 'scrollCarousel', 'carouselRef' e 'isPaused'
-          3. Descomentar esta sección JSX completa
-          4. Descomentar los imports: ChevronLeft, ChevronRight
-          5. Opcional: Descomentar el enlace en Header.tsx
-          ============================================================================
-        */}
-        {/*
-        <section id="marcas" className="py-16 md:py-20 bg-muted scroll-mt-20">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="section-title">Nuestras Marcas</h2>
-              <p className="text-muted-foreground mt-2 max-w-xl mx-auto">
-                Trabajamos con las mejores marcas de suplementos deportivos del mundo
-              </p>
-            </div>
-
-            <div className="relative">
-              <button
-                onClick={() => scrollCarousel('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-card border border-border rounded-full flex items-center justify-center shadow-lg hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 -ml-2 md:-ml-6"
-                aria-label="Anterior"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-
-              <button
-                onClick={() => scrollCarousel('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-card border border-border rounded-full flex items-center justify-center shadow-lg hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 -mr-2 md:-mr-6"
-                aria-label="Siguiente"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-
-              <div
-                ref={carouselRef}
-                className="overflow-x-auto scrollbar-hide scroll-smooth px-8"
-                onMouseEnter={() => setIsPaused(true)}
-                onMouseLeave={() => setIsPaused(false)}
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              >
-                <div
-                  className={`flex gap-6 py-4 ${!isPaused ? 'animate-carousel' : ''}`}
-                  style={{ width: 'fit-content' }}
-                >
-                  {[...brands, ...brands].map((brand, index) => (
-                    <div
-                      key={`brand-${index}`}
-                      className="flex-shrink-0 w-44 md:w-52 bg-card border border-border rounded-xl p-6 flex flex-col items-center justify-center hover:border-primary/50 hover:shadow-xl transition-all duration-300 group cursor-pointer"
-                    >
-                      <div className="w-full h-20 flex items-center justify-center mb-4 bg-white rounded-lg p-3">
-                        <img
-                          src={brand.logo}
-                          alt={brand.name}
-                          className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const initials = brand.name.split(' ').map(w => w[0]).join('');
-                            target.parentElement!.innerHTML = `<span class="text-3xl font-bold text-primary">${initials}</span>`;
-                          }}
-                        />
-                      </div>
-                      <span className="text-sm font-semibold text-foreground text-center">
-                        {brand.name}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        */}
-
         {/* Featured Products Section */}
-        <section className="py-16 md:py-20">
+        <section id="populares" className="py-16 md:py-20 scroll-mt-20">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -438,9 +312,11 @@ const Home: React.FC = () => {
               <Link to="/tienda" className="btn-primary inline-flex items-center justify-center gap-2">
                 Explorar tienda
               </Link>
-              <Link to="/register" className="btn-secondary inline-flex items-center justify-center">
-                Crear cuenta gratis
-              </Link>
+              {!isAuthenticated && (
+                <Link to="/register" className="btn-secondary inline-flex items-center justify-center">
+                  Crear cuenta gratis
+                </Link>
+              )}
             </div>
           </div>
         </section>

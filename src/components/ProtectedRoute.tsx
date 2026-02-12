@@ -19,8 +19,13 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    if (requireAdmin && user?.role !== 'admin') {
-        return <Navigate to="/access-denied" replace />;
+    if (requireAdmin) {
+        // Backend uses 'level', frontend might type it as 'role' or 'level'
+        const isAdmin = user?.level === 'admin' || user?.role === 'admin';
+
+        if (!isAdmin) {
+            return <Navigate to="/access-denied" replace />;
+        }
     }
 
     return <>{children}</>;

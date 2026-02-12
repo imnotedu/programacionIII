@@ -2,7 +2,6 @@ import React from "react";
 import { ShoppingCart, Star } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
-import { toast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   product: Product;
@@ -13,10 +12,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleAddToCart = () => {
     addToCart(product);
-    toast({
-      title: "Producto agregado",
-      description: `${product.name} se agregó al carrito`,
-    });
   };
 
   return (
@@ -32,7 +27,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             target.src = "/placeholder.svg";
           }}
         />
-        
+
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {product.isNew && <span className="badge-new">Nuevo</span>}
@@ -56,11 +51,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <span className="text-xs text-primary font-medium uppercase tracking-wide">
           {product.category}
         </span>
-        
+
         <h3 className="font-semibold text-foreground mt-1 line-clamp-1">
           {product.name}
         </h3>
-        
+
         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
           {product.description}
         </p>
@@ -70,9 +65,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
-              className={`w-3.5 h-3.5 ${
-                i < 4 ? "text-warning fill-warning" : "text-muted"
-              }`}
+              className={`w-3.5 h-3.5 ${i < 4 ? "text-warning fill-warning" : "text-muted"
+                }`}
             />
           ))}
           <span className="text-xs text-muted-foreground ml-1">(4.0)</span>

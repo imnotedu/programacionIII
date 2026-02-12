@@ -2,7 +2,7 @@
 
 Write-Host "1. Login como admin..." -ForegroundColor Cyan
 
-$body = '{"email":"admin","password":"1234567"}'
+$body = '{"email":"admin@powerfit.com","password":"1234567Ed!"}'
 $response = Invoke-WebRequest -Uri "http://localhost:3000/api/auth/login" -Method Post -Body $body -ContentType "application/json" -UseBasicParsing
 
 $json = $response.Content | ConvertFrom-Json

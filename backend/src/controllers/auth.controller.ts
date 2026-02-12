@@ -98,7 +98,7 @@ export async function register(
 ): Promise<void> {
   try {
     // Validar datos
-    const { name, email, password } = registerSchema.parse(req.body);
+    const { name, email, password, level } = registerSchema.parse(req.body);
 
     // Verificar si el email ya existe
     const existingResult = await query('SELECT id FROM users WHERE email = $1', [email]);
@@ -113,17 +113,18 @@ export async function register(
     // Crear usuario
     const userId = `user-${Date.now()}`;
     const now = new Date().toISOString();
+    const userLevel = level || 'usuario';
 
     await query(`
       INSERT INTO users (id, email, passwordHash, name, level, createdAt, updatedAt)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `, [userId, email, passwordHash, name, 'usuario', now, now]);
+    `, [userId, email, passwordHash, name, userLevel, now, now]);
 
     // Generar token
     const token = generateToken({
       userId,
       email,
-      level: 'usuario'
+      level: userLevel
     });
 
     // Responder con token y datos del usuario
@@ -135,7 +136,7 @@ export async function register(
           id: userId,
           email,
           name,
-          level: 'usuario'
+          level: userLevel
         }
       }
     });

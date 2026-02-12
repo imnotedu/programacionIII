@@ -9,7 +9,7 @@ Write-Host "1. Login como admin..." -ForegroundColor Yellow
 $loginResponse = Invoke-RestMethod -Uri "http://localhost:3000/api/auth/login" `
     -Method POST `
     -ContentType "application/json" `
-    -Body '{"email":"admin@test.com","password":"Admin123!"}'
+    -Body '{"email":"admin@powerfit.com","password":"1234567Ed!"}'
 
 $token = $loginResponse.data.token
 Write-Host "✓ Login exitoso" -ForegroundColor Green

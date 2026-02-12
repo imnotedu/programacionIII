@@ -1,73 +1,167 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { CartItem, Product } from "@/types";
+import api from "@/lib/axios";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  clearCart: () => void;
+  addToCart: (product: Product, quantity?: number) => Promise<void>;
+  removeFromCart: (productId: string) => Promise<void>;
+  updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  clearCart: () => Promise<void>;
   totalItems: number;
   totalPrice: number;
+  loading: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // 1. Inicialización Lazy - cargar desde localStorage
-  const [items, setItems] = useState<CartItem[]>(() => {
-    try {
-      const stored = localStorage.getItem("cart");
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
+  const { user, isAuthenticated } = useAuth();
+  const { toast } = useToast();
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [totalPrice, setTotalPrice] = useState(0);
 
-  // 2. Efecto para guardar cambios en localStorage
+  // Cargar carrito del backend cuando el usuario se autentica
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(items));
-  }, [items]);
+    if (isAuthenticated) {
+      fetchCart();
+    } else {
+      setItems([]);
+      setTotalPrice(0);
+    }
+  }, [isAuthenticated]);
 
-  const addToCart = (product: Product) => {
-    setItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.product.id === product.id);
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+  const fetchCart = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/cart');
+      if (response.data.success) {
+        setItems(response.data.data.items);
+        setTotalPrice(response.data.data.total);
       }
-      return [...prevItems, { product, quantity: 1 }];
-    });
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeFromCart = (productId: string) => {
-    setItems((prevItems) => prevItems.filter((item) => item.product.id !== productId));
-  };
-
-  const updateQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
+  const addToCart = async (product: Product, quantity: number = 1) => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Inicia sesión",
+        description: "Debes iniciar sesión para agregar productos al carrito",
+        variant: "destructive",
+      });
       return;
     }
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
-    );
+
+    try {
+      setLoading(true);
+      const response = await api.post('/cart/items', {
+        productId: product.id,
+        quantity
+      });
+
+      if (response.data.success) {
+        toast({
+          title: "Agregado",
+          description: "Producto agregado al carrito",
+        });
+        await fetchCart(); // Recargar para obtener el estado actualizado
+      }
+    } catch (error: any) {
+      const msg = error.response?.data?.message || "Error al agregar al carrito";
+      toast({
+        title: "Error",
+        description: msg,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const clearCart = () => {
-    setItems([]);
+  const removeFromCart = async (productId: string) => {
+    if (!isAuthenticated) return;
+
+    try {
+      setLoading(true);
+      const response = await api.delete(`/cart/items/${productId}`);
+      if (response.data.success) {
+        toast({
+          title: "Eliminado",
+          description: "Producto eliminado del carrito",
+        });
+        await fetchCart();
+      }
+    } catch (error: any) {
+      console.error("Error removing item:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el producto",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateQuantity = async (productId: string, quantity: number) => {
+    if (!isAuthenticated) return;
+
+    if (quantity <= 0) {
+      await removeFromCart(productId);
+      return;
+    }
+
+    try {
+      // Optimistic update (opcional, pero por ahora simple: loading)
+      // setLoading(true); // Puede ser molesto si actualiza cada click, mejor debounce o silent update.
+      // Haremos update directo y si falla revertimos o mostramos error.
+
+      const response = await api.put(`/cart/items/${productId}`, {
+        quantity
+      });
+
+      if (response.data.success) {
+        await fetchCart();
+      }
+    } catch (error: any) {
+      const msg = error.response?.data?.message || "Error al actualizar cantidad";
+      toast({
+        title: "Error",
+        description: msg,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const clearCart = async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      setLoading(true);
+      const response = await api.delete('/cart');
+      if (response.data.success) {
+        setItems([]);
+        setTotalPrice(0);
+        toast({
+          title: "Carrito vaciado",
+          description: "Se han eliminado todos los productos",
+        });
+      }
+    } catch (error: any) {
+      console.error("Error clearing cart:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
 
   return (
     <CartContext.Provider
@@ -79,6 +173,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         clearCart,
         totalItems,
         totalPrice,
+        loading
       }}
     >
       {children}

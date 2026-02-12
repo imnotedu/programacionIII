@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useProducts, Product } from '@/context/ProductContext';
+import { useProducts } from '@/context/ProductContext';
+import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ShoppingCart } from 'lucide-react';
-import { useToast } from "@/hooks/use-toast";
 
 const ProductDetail = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { getProductById } = useProducts();
     const { addToCart } = useCart();
-    const { toast } = useToast();
 
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
@@ -30,10 +29,6 @@ const ProductDetail = () => {
     const handleAddToCart = () => {
         if (product) {
             addToCart(product);
-            toast({
-                title: "Producto agregado",
-                description: `${product.name} se agregó al carrito.`
-            });
         }
     };
 

@@ -4,8 +4,8 @@
 Write-Host "=== PRUEBA 1: Login como Admin ===" -ForegroundColor Cyan
 
 $loginBody = @{
-    email = "admin"
-    password = "1234567"
+    email = "admin@powerfit.com"
+    password = "1234567Ed!"
 } | ConvertTo-Json
 
 $response = Invoke-RestMethod -Uri "http://localhost:3000/api/auth/login" -Method Post -Body $loginBody -ContentType "application/json"

@@ -1,20 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
+import api from "@/lib/axios";
 import { useToast } from "@/hooks/use-toast";
 
-// Definir tipos basados en el backend (ver product.controller.ts)
-export interface Product {
-    id: string;
-    name: string;
-    code: string;
-    price: number;
-    description: string;
-    category: string;
-    imageUrl?: string;
-    stock: number;
-    createdAt: string;
-    updatedAt: string;
-}
+import { Product } from "@/types";
 
 interface ProductContextType {
     products: Product[];
@@ -24,6 +12,7 @@ interface ProductContextType {
     getProductById: (id: string) => Promise<Product | null>;
     refreshProducts: () => Promise<void>;
     createProduct: (data: any) => Promise<void>;
+    addProduct: (data: any) => Promise<void>; // Alias
     updateProduct: (id: string, data: any) => Promise<void>;
     deleteProduct: (id: string) => Promise<void>;
 }
@@ -48,18 +37,26 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
     const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
 
+    const mapProduct = (p: any): Product => ({
+        ...p,
+        image: p.imageUrl || p.image || '/placeholder.png',
+        imageUrl: p.imageUrl || p.image || '/placeholder.png',
+        price: Number(p.price),
+        stock: Number(p.stock)
+    });
+
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:5000/api/products');
+            const response = await api.get('/products');
             if (response.data.success) {
-                setProducts(response.data.data.products);
+                const mapped = response.data.data.products.map(mapProduct);
+                setProducts(mapped);
                 setError(null);
             }
         } catch (err: any) {
             console.error("Error fetching products:", err);
             setError(err.response?.data?.message || "Error al cargar productos");
-            // No mostrar toast aquí para no spammear al inicio
         } finally {
             setLoading(false);
         }
@@ -71,9 +68,9 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
 
     const getProductByCode = async (code: string): Promise<Product | null> => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/products/code/${code}`);
+            const response = await api.get(`/products/code/${code}`);
             if (response.data.success) {
-                return response.data.data.product;
+                return mapProduct(response.data.data.product);
             }
             return null;
         } catch (error) {
@@ -84,9 +81,9 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
 
     const getProductById = async (id: string): Promise<Product | null> => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+            const response = await api.get(`/products/${id}`);
             if (response.data.success) {
-                return response.data.data.product;
+                return mapProduct(response.data.data.product);
             }
             return null;
         } catch (error) {
@@ -97,10 +94,13 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
 
     const createProduct = async (data: any) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:5000/api/products', data, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const payload = {
+                ...data,
+                imageUrl: data.image || data.imageUrl,
+                code: data.code || `PROD-${Date.now()}`
+            };
+
+            const response = await api.post('/products', payload);
             if (response.data.success) {
                 toast({ title: "Éxito", description: "Producto creado correctamente" });
                 await fetchProducts();
@@ -114,10 +114,12 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
 
     const updateProduct = async (id: string, data: any) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.put(`http://localhost:5000/api/products/${id}`, data, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const payload = {
+                ...data,
+                imageUrl: data.image || data.imageUrl
+            };
+
+            const response = await api.put(`/products/${id}`, payload);
             if (response.data.success) {
                 toast({ title: "Éxito", description: "Producto actualizado correctamente" });
                 await fetchProducts();
@@ -131,10 +133,7 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
 
     const deleteProduct = async (id: string) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.delete(`http://localhost:5000/api/products/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.delete(`/products/${id}`);
             if (response.data.success) {
                 toast({ title: "Éxito", description: "Producto eliminado correctamente" });
                 await fetchProducts();
@@ -155,6 +154,7 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
             getProductById,
             refreshProducts: fetchProducts,
             createProduct,
+            addProduct: createProduct,
             updateProduct,
             deleteProduct
         }}>
