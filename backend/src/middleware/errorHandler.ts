@@ -23,33 +23,80 @@ export function errorHandler(
     console.error(err.stack);
   }
 
+  // Determinar si es una petición AJAX
+  const isAjax = req.xhr || req.headers.accept?.includes('application/json');
+
   // Error de validación de Zod
   if (err instanceof ZodError) {
-    res.status(400).json({
-      success: false,
-      message: 'Error de validación',
-      errors: err.errors.map(e => ({
-        field: e.path.join('.'),
-        message: e.message
-      }))
-    });
+    if (isAjax) {
+      res.status(400).json({
+        success: false,
+        message: 'Error de validación',
+        errors: err.issues.map((e: any) => ({
+          field: e.path.join('.'),
+          message: e.message
+        }))
+      });
+    } else {
+      // Renderizar página de error para peticiones de página
+      res.status(400).render('pages/error', {
+        title: 'Error de Validación - PowerFit',
+        message: 'Error de validación en los datos enviados',
+        statusCode: 400,
+        errors: err.issues.map((e: any) => ({
+          field: e.path.join('.'),
+          message: e.message
+        })),
+        stack: process.env.NODE_ENV === 'development' ? err.stack : null
+      });
+    }
     return;
   }
 
   // Error de aplicación personalizado
   if (err instanceof AppError) {
-    res.status(err.statusCode).json({
-      success: false,
-      message: err.message
-    });
+    if (isAjax) {
+      res.status(err.statusCode).json({
+        success: false,
+        message: err.message
+      });
+    } else {
+      // Renderizar página de error para peticiones de página
+      res.status(err.statusCode).render('pages/error', {
+        title: 'Error - PowerFit',
+        message: err.message,
+        statusCode: err.statusCode,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : null
+      });
+    }
     return;
   }
 
   // Error desconocido
-  res.status(500).json({
-    success: false,
-    message: 'Error interno del servidor'
-  });
+  const statusCode = 500;
+  
+  if (isAjax) {
+    const errorResponse: any = {
+      success: false,
+      message: 'Error interno del servidor'
+    };
+    
+    // Incluir stack trace solo en desarrollo
+    if (process.env.NODE_ENV === 'development' && err.stack) {
+      errorResponse.stack = err.stack;
+    }
+    
+    res.status(statusCode).json(errorResponse);
+  } else {
+    // Renderizar página de error para peticiones de página
+    res.status(statusCode).render('pages/error', {
+      title: 'Error - PowerFit',
+      message: 'Ha ocurrido un error inesperado',
+      statusCode,
+      // Incluir stack trace solo en desarrollo
+      stack: process.env.NODE_ENV === 'development' ? err.stack : null
+    });
+  }
 }
 
 /**
@@ -60,8 +107,19 @@ export function notFoundHandler(
   res: Response,
   next: NextFunction
 ): void {
-  res.status(404).json({
-    success: false,
-    message: `Ruta no encontrada: ${req.method} ${req.path}`
-  });
+  // Determinar si es una petición AJAX
+  const isAjax = req.xhr || req.headers.accept?.includes('application/json');
+  
+  if (isAjax) {
+    res.status(404).json({
+      success: false,
+      message: `Ruta no encontrada: ${req.method} ${req.path}`
+    });
+  } else {
+    // Renderizar página 404 para peticiones de página
+    res.status(404).render('pages/not-found', {
+      title: 'Página No Encontrada - PowerFit',
+      path: req.path
+    });
+  }
 }

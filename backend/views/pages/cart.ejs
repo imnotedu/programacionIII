@@ -1,0 +1,101 @@
+<% if (items.length === 0) { %>
+  <main class="flex-1 flex items-center justify-center py-16">
+    <div class="text-center px-4">
+      <div class="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-foreground mb-2">
+        Tu carrito está vacío
+      </h1>
+      <p class="text-muted-foreground mb-6">
+        Agrega productos para comenzar tu compra
+      </p>
+      <a href="/tienda" class="btn-primary inline-flex items-center gap-2">
+        Ir a la tienda
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+        </svg>
+      </a>
+    </div>
+  </main>
+<% } else { %>
+  <main class="flex-1 py-8 md:py-12">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between mb-8">
+        <h1 class="section-title">Tu Carrito</h1>
+        <button
+          id="clear-cart-btn"
+          class="text-sm text-muted-foreground hover:text-destructive transition-colors"
+        >
+          Vaciar carrito
+        </button>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-8">
+        <!-- Cart Items -->
+        <div class="lg:col-span-2 space-y-4">
+          <% items.forEach(function(item) { %>
+            <%- include('../partials/cart-item', { item: item }) %>
+          <% }); %>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+          <div class="bg-card border border-border rounded-xl p-6 sticky top-24">
+            <h2 class="text-lg font-semibold text-foreground mb-4">
+              Resumen del pedido
+            </h2>
+
+            <div class="space-y-3 mb-6">
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">Subtotal</span>
+                <span class="text-foreground">$<span id="cart-total"><%= total.toFixed(2) %></span></span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">Envío</span>
+                <span class="text-foreground">
+                  <%= total >= 50 ? 'Gratis' : '$5.99' %>
+                </span>
+              </div>
+              <div class="border-t border-border pt-3">
+                <div class="flex justify-between">
+                  <span class="font-semibold text-foreground">Total</span>
+                  <span class="font-bold text-xl text-foreground">
+                    $<%= (total + (total >= 50 ? 0 : 5.99)).toFixed(2) %>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <% if (total < 50) { %>
+              <p class="text-sm text-muted-foreground mb-4">
+                ¡Agrega $<%= (50 - total).toFixed(2) %> más para envío gratis!
+              </p>
+            <% } %>
+
+            <a
+              href="/checkout"
+              class="btn-primary w-full flex items-center justify-center gap-2"
+            >
+              Proceder al pago
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
+            </a>
+
+            <a
+              href="/tienda"
+              class="block text-center text-sm text-primary font-medium mt-4 hover:underline"
+            >
+              Continuar comprando
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+<% } %>
+
+<script src="/js/cart.js"></script>

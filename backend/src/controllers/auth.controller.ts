@@ -34,54 +34,39 @@ export async function login(
     const user = result.rows[0];
 
     if (!user) {
-      throw new AuthenticationError('Credenciales incorrectas');
+      req.flash('error', 'Credenciales incorrectas');
+      return res.redirect('/login');
     }
 
     // Verificar contraseña
-    // Nota: en Postgres las columnas suelen devolverse en minúsculas, 
-    // asegurarse de que passwordHash coincida con la definición de la tabla (creada como camelCase pero Postgres es case-insensitive por defecto a menos que se use comillas)
-    // En initializeTables usamos passwordHash sin comillas, así que Postgres lo guardará como passwordhash (todo minúsculas)
-    // Pero espera, better-sqlite3 devolvía camelCase si la query lo pedía.
-    // Vamos a asumir que pg devuelve los nombres de columnas tal cual.
-    // Ajuste: Postgres convierte nombres de columnas a minúsculas si no están entre comillas.
-    // En initializeTables: passwordHash TEXT. -> passwordhash
-    // En la query: SELECT ... passwordHash ... -> passwordhash
-    // Vamos a acceder dinámicamente o usar el nombre correcto.
-
-    // Para evitar problemas, usaremos acceso seguro
     const dbPassword = user.passwordhash || user.passwordHash;
 
     if (!dbPassword) {
       console.error("Error crítico: No se encuentra hash de contraseña", user);
-      throw new AuthenticationError('Error interno de autenticación');
+      req.flash('error', 'Error interno de autenticación');
+      return res.redirect('/login');
     }
 
     const isValidPassword = await comparePassword(password, dbPassword);
 
     if (!isValidPassword) {
-      throw new AuthenticationError('Credenciales incorrectas');
+      req.flash('error', 'Credenciales incorrectas');
+      return res.redirect('/login');
     }
 
-    // Generar token
-    const token = generateToken({
-      userId: user.id,
+    // Almacenar usuario en sesión
+    req.session.user = {
+      id: user.id,
       email: user.email,
-      level: user.level
-    });
+      name: user.name,
+      isAdmin: user.level === 'admin'
+    };
 
-    // Responder con token y datos del usuario
-    res.json({
-      success: true,
-      data: {
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          level: user.level
-        }
-      }
-    });
+    // Establecer mensaje de éxito
+    req.flash('success', `¡Bienvenido, ${user.name}!`);
+    
+    // Redirigir a la página de inicio
+    res.redirect('/');
   } catch (error) {
     next(error);
   }
@@ -104,7 +89,8 @@ export async function register(
     const existingResult = await query('SELECT id FROM users WHERE email = $1', [email]);
 
     if (existingResult.rows.length > 0) {
-      throw new ConflictError('Este correo electrónico ya está registrado');
+      req.flash('error', 'Este correo electrónico ya está registrado');
+      return res.redirect('/register');
     }
 
     // Hashear contraseña
@@ -119,26 +105,19 @@ export async function register(
       VALUES ($1, $2, $3, $4, $5, $6, $7)
     `, [userId, email, passwordHash, name, 'usuario', now, now]);
 
-    // Generar token
-    const token = generateToken({
-      userId,
+    // Almacenar usuario en sesión
+    req.session.user = {
+      id: userId,
       email,
-      level: 'usuario'
-    });
+      name,
+      isAdmin: false
+    };
 
-    // Responder con token y datos del usuario
-    res.status(201).json({
-      success: true,
-      data: {
-        token,
-        user: {
-          id: userId,
-          email,
-          name,
-          level: 'usuario'
-        }
-      }
-    });
+    // Establecer mensaje de éxito
+    req.flash('success', '¡Cuenta creada exitosamente! Bienvenido a PowerFit');
+    
+    // Redirigir a la página de inicio
+    res.redirect('/');
   } catch (error) {
     next(error);
   }
@@ -182,6 +161,35 @@ export async function getProfile(
           createdAt: user.createdat || user.createdAt
         }
       }
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Logout de usuario
+ * POST /api/auth/logout
+ */
+export async function logout(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    // Destruir la sesión
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error al destruir sesión:', err);
+        req.flash('error', 'Error al cerrar sesión');
+        return res.redirect('/');
+      }
+      
+      // Limpiar la cookie de sesión
+      res.clearCookie('powerfit.sid');
+      
+      // Redirigir a la página de inicio
+      res.redirect('/');
     });
   } catch (error) {
     next(error);

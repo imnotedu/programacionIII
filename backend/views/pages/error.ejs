@@ -1,0 +1,44 @@
+<div class="min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-md w-full text-center">
+    <div class="w-20 h-20 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
+      <svg class="w-10 h-10 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    </div>
+    
+    <h1 class="text-4xl font-bold text-foreground mb-2">
+      Error <%= statusCode || 500 %>
+    </h1>
+    
+    <p class="text-lg text-muted-foreground mb-8">
+      <%= message || 'Ha ocurrido un error inesperado' %>
+    </p>
+    
+    <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+      <div class="text-left bg-muted p-4 rounded-lg mb-6">
+        <h3 class="font-medium mb-2">Errores de validación:</h3>
+        <ul class="list-disc list-inside space-y-1 text-sm">
+          <% errors.forEach(function(error) { %>
+            <li><strong><%= error.field %>:</strong> <%= error.message %></li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+    
+    <% if (stack && process.env.NODE_ENV === 'development') { %>
+      <details class="text-left bg-muted p-4 rounded-lg mb-6">
+        <summary class="cursor-pointer font-medium">Stack Trace</summary>
+        <pre class="text-xs mt-2 overflow-auto"><%= stack %></pre>
+      </details>
+    <% } %>
+    
+    <div class="flex gap-4 justify-center">
+      <a href="/" class="btn-primary">
+        Volver al inicio
+      </a>
+      <button onclick="history.back()" class="btn-secondary">
+        Volver atrás
+      </button>
+    </div>
+  </div>
+</div>

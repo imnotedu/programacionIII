@@ -1,14 +1,14 @@
 /**
  * Middleware de Autenticación
  * 
- * Verifica tokens JWT y protege rutas.
+ * Verifica sesiones y protege rutas para la aplicación EJS.
  */
 
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken, JWTPayload } from '../utils/auth';
 import { AuthenticationError, AuthorizationError } from '../utils/errors';
 
-// Extender Request para incluir user
+// Extender Request para incluir user (para compatibilidad con JWT)
 declare global {
   namespace Express {
     interface Request {
@@ -18,7 +18,7 @@ declare global {
 }
 
 /**
- * Middleware para verificar autenticación
+ * Middleware para verificar autenticación JWT (para API REST)
  */
 export function authenticate(
   req: Request,
@@ -48,9 +48,9 @@ export function authenticate(
 }
 
 /**
- * Middleware para verificar que el usuario sea admin
+ * Middleware para verificar que el usuario sea admin (JWT)
  */
-export function requireAdmin(
+export function requireAdminJWT(
   req: Request,
   res: Response,
   next: NextFunction
@@ -63,5 +63,62 @@ export function requireAdmin(
     return next(new AuthorizationError('Se requieren permisos de administrador'));
   }
 
+  next();
+}
+
+// ============================================================================
+// Middleware de Autenticación basado en Sesiones (para vistas EJS)
+// ============================================================================
+
+/**
+ * Middleware para verificar sesión activa
+ * Redirige a /login si el usuario no está autenticado
+ * 
+ * Requisitos: 14.1, 14.3, 14.5
+ */
+export function requireAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  if (req.session.user) {
+    return next();
+  }
+  req.flash('error', 'Debes iniciar sesión para acceder a esta página');
+  res.redirect('/login');
+}
+
+/**
+ * Middleware para verificar rol de administrador
+ * Redirige a /access-denied si el usuario no es admin
+ * 
+ * Requisitos: 14.2, 14.4, 14.5
+ */
+export function requireAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  if (req.session.user?.isAdmin) {
+    return next();
+  }
+  req.flash('error', 'No tienes permisos para acceder a esta página');
+  res.redirect('/access-denied');
+}
+
+/**
+ * Middleware para redirigir si ya está autenticado
+ * Útil para páginas de login/register
+ * 
+ * Requisitos: 14.6
+ */
+export function redirectIfAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  if (req.session.user) {
+    return res.redirect('/');
+  }
   next();
 }

@@ -245,6 +245,7 @@ export async function deleteProduct(
  */
 function mapProductFromDb(row: any): any {
     if (!row) return null;
+    const imageUrl = row.imageurl || row.imageUrl;
     return {
         id: row.id,
         name: row.name,
@@ -252,7 +253,8 @@ function mapProductFromDb(row: any): any {
         price: parseFloat(row.price), // Postgres devuelve decimales como strings
         description: row.description,
         category: row.category,
-        imageUrl: row.imageurl || row.imageUrl, // Handle lowercase casing from PG
+        imageUrl: imageUrl, // Handle lowercase casing from PG
+        image: imageUrl, // Alias para las vistas EJS
         stock: row.stock,
         createdAt: row.createdat || row.createdAt,
         updatedAt: row.updatedat || row.updatedAt

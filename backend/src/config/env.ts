@@ -7,9 +7,11 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Cargar variables de entorno desde backend/.env
-// Intentamos múltiples ubicaciones para mayor compatibilidad
-const envPath = path.resolve(process.cwd(), 'backend', '.env');
+// Cargar variables de entorno desde .env
+// Detecta automáticamente si estamos en la raíz o en backend/
+const envPath = process.cwd().endsWith('backend') 
+  ? path.resolve(process.cwd(), '.env')
+  : path.resolve(process.cwd(), 'backend', '.env');
 dotenv.config({ path: envPath });
 
 /**

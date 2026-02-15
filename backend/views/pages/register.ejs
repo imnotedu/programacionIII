@@ -1,0 +1,298 @@
+<!-- Hero Register Section -->
+<section class="relative min-h-screen bg-charcoal overflow-hidden flex items-center">
+  <!-- Animated background -->
+  <div class="absolute inset-0 opacity-20">
+    <div class="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-primary/30 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+  </div>
+
+  <!-- Grid pattern overlay -->
+  <div class="absolute inset-0 bg-[linear-gradient(rgba(139,195,74,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,195,74,0.03)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+
+  <div class="container mx-auto px-4 py-12 relative z-10">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        
+        <!-- Left Side - Branding & Info -->
+        <div class="hidden lg:block">
+          <a href="/" class="inline-flex items-center gap-2 text-white/60 hover:text-primary mb-12 transition-all group">
+            <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span class="font-medium">Volver al inicio</span>
+          </a>
+
+          <div class="mb-8">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-14 h-14 bg-primary rounded-xl flex items-center justify-center">
+                <svg class="w-8 h-8 text-charcoal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+              </div>
+              <span class="text-3xl font-bold text-white">
+                Power<span class="text-primary">Fit</span>
+              </span>
+            </div>
+            
+            <h1 class="text-5xl font-bold text-white leading-tight mb-6">
+              Únete a<br/>
+              <span class="text-primary">PowerFit</span>
+            </h1>
+            
+            <p class="text-white/70 text-xl leading-relaxed mb-8">
+              Crea tu cuenta y comienza tu camino hacia el máximo rendimiento deportivo.
+            </p>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-3 gap-6">
+            <div class="text-center">
+              <div class="text-4xl font-bold text-primary mb-2">500+</div>
+              <p class="text-white/60 text-sm">Productos</p>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold text-primary mb-2">10K+</div>
+              <p class="text-white/60 text-sm">Clientes</p>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold text-primary mb-2">4.9★</div>
+              <p class="text-white/60 text-sm">Rating</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side - Form -->
+        <div class="w-full">
+          <!-- Mobile back button -->
+          <a href="/" class="lg:hidden inline-flex items-center gap-2 text-white/60 hover:text-primary mb-8 transition-all group">
+            <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span class="font-medium">Volver</span>
+          </a>
+
+          <!-- Mobile logo -->
+          <div class="lg:hidden flex items-center gap-3 mb-8">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+              <svg class="w-7 h-7 text-charcoal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+            <span class="text-2xl font-bold text-white">
+              Power<span class="text-primary">Fit</span>
+            </span>
+          </div>
+
+          <!-- Form Card -->
+          <div class="bg-card border border-border rounded-2xl p-8 shadow-2xl">
+            <h2 class="text-3xl font-bold text-white mb-2">
+              Crear cuenta
+            </h2>
+            <p class="text-white/60 mb-8">
+              Completa el formulario para comenzar
+            </p>
+
+            <form action="/api/auth/register" method="POST" class="space-y-5" data-validate id="register-form">
+              <!-- Name -->
+              <div class="space-y-2">
+                <label for="name" class="block text-sm font-semibold text-white">
+                  Nombre completo
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  name="name"
+                  placeholder="Tu nombre"
+                  class="w-full h-12 px-4 bg-background border border-border rounded-lg text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  required
+                />
+                <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+              </div>
+
+              <!-- Email -->
+              <div class="space-y-2">
+                <label for="email" class="block text-sm font-semibold text-white">
+                  Correo electrónico
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  placeholder="tu@email.com"
+                  class="w-full h-12 px-4 bg-background border border-border rounded-lg text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  required
+                />
+                <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+              </div>
+
+              <!-- Password -->
+              <div class="space-y-2">
+                <label for="password" class="block text-sm font-semibold text-white">
+                  Contraseña
+                </label>
+                <div class="relative">
+                  <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    placeholder="••••••••"
+                    class="w-full h-12 px-4 pr-12 bg-background border border-border rounded-lg text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onclick="togglePassword('password')"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                    aria-label="Mostrar contraseña"
+                    id="password-toggle"
+                  >
+                    <svg id="password-eye-open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    <svg id="password-eye-closed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                    </svg>
+                  </button>
+                </div>
+                <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+                
+                <!-- Password strength indicator -->
+                <div id="password-strength" class="mt-3 space-y-2 hidden">
+                  <div class="flex items-center gap-2 text-xs">
+                    <svg class="w-4 h-4 check-icon hidden text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <svg class="w-4 h-4 x-icon text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    <span class="strength-text text-muted-foreground" data-check="length">Mínimo 6 caracteres</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Confirm Password -->
+              <div class="space-y-2">
+                <label for="confirmPassword" class="block text-sm font-semibold text-white">
+                  Confirmar contraseña
+                </label>
+                <div class="relative">
+                  <input
+                    id="confirmPassword"
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="••••••••"
+                    class="w-full h-12 px-4 pr-12 bg-background border border-border rounded-lg text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onclick="togglePassword('confirmPassword')"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                    aria-label="Mostrar contraseña"
+                    id="confirmPassword-toggle"
+                  >
+                    <svg id="confirmPassword-eye-open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    <svg id="confirmPassword-eye-closed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                    </svg>
+                  </button>
+                </div>
+                <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+              </div>
+
+              <!-- Submit Button -->
+              <button
+                type="submit"
+                class="w-full h-12 bg-primary hover:bg-primary/90 text-charcoal font-bold rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20"
+              >
+                Crear cuenta
+              </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-8">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-border"></div>
+              </div>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-4 bg-card text-muted-foreground">¿Ya tienes cuenta?</span>
+              </div>
+            </div>
+
+            <!-- Login Link -->
+            <a href="/login" class="block">
+              <button type="button" class="w-full h-12 border-2 border-border hover:border-primary rounded-lg font-semibold text-white hover:text-primary transition-all hover:bg-primary/5">
+                Iniciar sesión
+              </button>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function togglePassword(inputId) {
+  const input = document.getElementById(inputId);
+  const eyeOpen = document.getElementById(inputId + '-eye-open');
+  const eyeClosed = document.getElementById(inputId + '-eye-closed');
+  const toggleBtn = document.getElementById(inputId + '-toggle');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    eyeOpen.classList.add('hidden');
+    eyeClosed.classList.remove('hidden');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-label', 'Ocultar contraseña');
+    }
+  } else {
+    input.type = 'password';
+    eyeOpen.classList.remove('hidden');
+    eyeClosed.classList.add('hidden');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-label', 'Mostrar contraseña');
+    }
+  }
+}
+
+// Password strength validation
+document.getElementById('password').addEventListener('input', function(e) {
+  const password = e.target.value;
+  const strengthDiv = document.getElementById('password-strength');
+  
+  if (password) {
+    strengthDiv.classList.remove('hidden');
+    const checks = {
+      length: password.length >= 6
+    };
+    
+    Object.keys(checks).forEach(check => {
+      const element = strengthDiv.querySelector(`[data-check="${check}"]`);
+      const parent = element.parentElement;
+      const checkIcon = parent.querySelector('.check-icon');
+      const xIcon = parent.querySelector('.x-icon');
+      
+      if (checks[check]) {
+        checkIcon.classList.remove('hidden');
+        xIcon.classList.add('hidden');
+        element.classList.remove('text-muted-foreground');
+        element.classList.add('text-primary');
+      } else {
+        checkIcon.classList.add('hidden');
+        xIcon.classList.remove('hidden');
+        element.classList.remove('text-primary');
+        element.classList.add('text-muted-foreground');
+      }
+    });
+  } else {
+    strengthDiv.classList.add('hidden');
+  }
+});
+</script>
+<script src="/js/forms.js"></script>

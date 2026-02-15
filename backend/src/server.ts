@@ -6,7 +6,7 @@
 
 import { createApp } from './app';
 import { config, validateEnv } from './config/env';
-import { initializeTables, createSuperAdmin, closeDatabase } from './config/database';
+import { initializeTables, createSuperAdmin, closeDatabase, seedProductsIfEmpty } from './config/database';
 
 /**
  * Inicializa y arranca el servidor
@@ -22,6 +22,7 @@ async function startServer(): Promise<void> {
     console.log('📦 Inicializando base de datos...');
     initializeTables();
     await createSuperAdmin();
+    await seedProductsIfEmpty();
     console.log('');
 
     // Crear aplicación Express

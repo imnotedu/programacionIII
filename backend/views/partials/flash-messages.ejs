@@ -1,0 +1,47 @@
+<% if (success && success.length > 0) { %>
+  <div class="fixed top-20 right-4 z-50 animate-slide-in">
+    <% success.forEach(function(message) { %>
+      <div class="bg-success text-white px-6 py-4 rounded-lg shadow-lg mb-2 flex items-center gap-3 flash-message">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span><%= message %></span>
+        <button onclick="this.parentElement.remove()" class="ml-4 hover:opacity-75">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+  <div class="fixed top-20 right-4 z-50 animate-slide-in">
+    <% error.forEach(function(message) { %>
+      <div class="bg-destructive text-destructive-foreground px-6 py-4 rounded-lg shadow-lg mb-2 flex items-center gap-3 flash-message">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span><%= message %></span>
+        <button onclick="this.parentElement.remove()" class="ml-4 hover:opacity-75">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<script>
+  // Auto-dismiss flash messages after 5 seconds
+  setTimeout(() => {
+    document.querySelectorAll('.flash-message').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(100%)';
+      el.style.transition = 'all 0.3s ease-out';
+      setTimeout(() => el.remove(), 300);
+    });
+  }, 5000);
+</script>

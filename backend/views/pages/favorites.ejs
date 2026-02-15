@@ -1,0 +1,51 @@
+<main class="flex-1 container mx-auto px-4 pt-24 pb-8 md:pt-28 md:pb-12">
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold flex items-center gap-3">
+        <svg class="w-8 h-8 text-red-500 fill-red-500" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+        </svg>
+        Mis Favoritos
+      </h1>
+      <p class="text-muted-foreground mt-2">
+        <%= products.length %> <%= products.length === 1 ? 'producto guardado' : 'productos guardados' %>
+      </p>
+    </div>
+
+    <a href="/tienda" class="btn-secondary inline-flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      Seguir comprando
+    </a>
+  </div>
+
+  <% if (products.length > 0) { %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <% products.forEach(function(product) { %>
+        <%- include('../partials/product-card', { product: product, favorites: favorites }) %>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="text-center py-20 bg-muted/30 rounded-3xl border border-dashed border-border">
+      <div class="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold mb-3">No tienes favoritos aún</h2>
+      <p class="text-muted-foreground max-w-md mx-auto mb-8">
+        Guarda los productos que más te gusten haciendo clic en el corazón para encontrarlos fácilmente después.
+      </p>
+      <a href="/tienda" class="btn-primary inline-flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+        </svg>
+        Explorar productos
+      </a>
+    </div>
+  <% } %>
+</main>
+
+<script src="/js/favorites.js"></script>
+<script src="/js/cart.js"></script>

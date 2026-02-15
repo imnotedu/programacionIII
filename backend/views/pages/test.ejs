@@ -1,0 +1,26 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-4xl font-bold mb-4">PowerFit - EJS Configuration Test</h1>
+  <p class="text-lg mb-4">If you can see this page, EJS is configured correctly!</p>
+  
+  <div class="bg-card p-6 rounded-lg border border-border">
+    <h2 class="text-2xl font-semibold mb-2">Configuration Status:</h2>
+    <ul class="list-disc list-inside space-y-2">
+      <li>✅ EJS template engine configured</li>
+      <li>✅ express-ejs-layouts configured</li>
+      <li>✅ Views directory: backend/views</li>
+      <li>✅ Static files directory: backend/public</li>
+      <li>✅ Session middleware configured</li>
+      <li>✅ Flash messages configured</li>
+    </ul>
+  </div>
+  
+  <div class="mt-6">
+    <h3 class="text-xl font-semibold mb-2">Session Variables:</h3>
+    <ul class="list-disc list-inside">
+      <li>User: <%= user ? user.name : 'Not authenticated' %></li>
+      <li>Is Authenticated: <%= isAuthenticated %></li>
+      <li>Cart Count: <%= cartCount %></li>
+      <li>Current Path: <%= currentPath %></li>
+    </ul>
+  </div>
+</div>

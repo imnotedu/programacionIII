@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="<%= typeof description !== 'undefined' ? description : 'PowerFit - Suplementos deportivos de alta calidad para potenciar tu rendimiento. Proteínas, pre-entrenos, aminoácidos y más.' %>">
+  <meta name="keywords" content="<%= typeof keywords !== 'undefined' ? keywords : 'suplementos deportivos, proteínas, pre-entreno, aminoácidos, vitaminas, fitness, nutrición deportiva, PowerFit' %>">
+  <meta name="author" content="PowerFit">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'PowerFit - Suplementos Deportivos' %>">
+  <meta property="og:description" content="<%= typeof description !== 'undefined' ? description : 'Suplementos deportivos de alta calidad para potenciar tu rendimiento' %>">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= typeof ogUrl !== 'undefined' ? ogUrl : 'https://powerfit.com' %>">
+  <meta property="og:image" content="<%= typeof ogImage !== 'undefined' ? ogImage : '/images/og-image.jpg' %>">
+  <meta property="og:site_name" content="PowerFit">
+  <meta property="og:locale" content="es_ES">
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= typeof title !== 'undefined' ? title : 'PowerFit - Suplementos Deportivos' %>">
+  <meta name="twitter:description" content="<%= typeof description !== 'undefined' ? description : 'Suplementos deportivos de alta calidad' %>">
+  <meta name="twitter:image" content="<%= typeof ogImage !== 'undefined' ? ogImage : '/images/og-image.jpg' %>">
+  
+  <title><%= typeof title !== 'undefined' ? title : 'PowerFit' %></title>
+  
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="/css/styles.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  
+  <%- typeof style !== 'undefined' ? style : '' %>
+</head>
+<body class="min-h-screen flex flex-col bg-background text-foreground">
+  <%- include('../partials/header') %>
+  
+  <%- include('../partials/flash-messages') %>
+  
+  <main class="flex-1">
+    <%- body %>
+  </main>
+  
+  <%- include('../partials/footer') %>
+  
+  <!-- Scripts -->
+  <script src="/js/main.js"></script>
+  <%- typeof script !== 'undefined' ? script : '' %>
+</body>
+</html>

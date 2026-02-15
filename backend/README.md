@@ -1,38 +1,303 @@
-# PowerFit Backend API
+# PowerFit Backend - EJS Server-Side Rendering
 
-Backend RESTful para el sistema de ecommerce PowerFit, construido con Node.js, Express, TypeScript y SQLite.
+Backend para el sistema de ecommerce PowerFit, construido con Node.js, Express, EJS y SQLite. Utiliza renderizado del lado del servidor (SSR) con plantillas EJS.
 
 ## 🏗️ Arquitectura
 
 ```
 backend/
 ├── src/
-│   ├── config/          # Configuración (DB, env)
-│   ├── controllers/     # Controladores de rutas
-│   ├── middleware/      # Middleware personalizado
-│   ├── routes/          # Definición de rutas
+│   ├── config/          # Configuración (DB, sesiones, env)
+│   ├── controllers/     # Controladores de rutas y vistas
+│   ├── middleware/      # Middleware personalizado (auth, sesión)
+│   ├── routes/          # Definición de rutas (API y vistas)
 │   ├── schemas/         # Schemas de validación (Zod)
-│   ├── utils/           # Utilidades (auth, errors)
+│   ├── utils/           # Utilidades (auth, errors, helpers)
 │   ├── app.ts           # Configuración de Express
 │   └── server.ts        # Punto de entrada
+├── views/
+│   ├── layouts/         # Layouts principales (main.ejs, auth.ejs)
+│   ├── partials/        # Componentes reutilizables (header, footer, etc.)
+│   └── pages/           # Páginas completas (home, store, cart, etc.)
+├── public/
+│   ├── css/             # Estilos compilados (Tailwind CSS)
+│   ├── js/              # JavaScript del cliente
+│   ├── images/          # Imágenes estáticas
+│   └── products/        # Imágenes de productos
 ├── .env                 # Variables de entorno
 ├── .env.example         # Ejemplo de variables
-└── tsconfig.json        # Configuración TypeScript
+└── package.json         # Dependencias y scripts
 ```
 
 ## 🚀 Inicio Rápido
 
-### Instalar dependencias (ya instaladas):
+### 1. Instalar dependencias
+
 ```bash
+cd backend
 npm install
 ```
 
-### Iniciar servidor de desarrollo:
+### 2. Configurar variables de entorno
+
+Copia `.env.example` a `.env` y configura las variables:
+
 ```bash
-npm run server
+cp .env.example .env
+```
+
+Edita `.env` con tus valores:
+
+```env
+# Configuración del Servidor
+PORT=3000
+NODE_ENV=development
+
+# JWT
+JWT_SECRET=powerfit-secret-key-change-in-production
+JWT_EXPIRES_IN=24h
+
+# Sesiones
+SESSION_SECRET=powerfit-session-secret-change-in-production
+
+# CORS
+CORS_ORIGIN=http://localhost:8081
+
+# Base de Datos
+DB_PATH=./powerfit.db
+```
+
+### 3. Compilar estilos CSS
+
+```bash
+npm run build:css
+```
+
+### 4. Iniciar servidor de desarrollo
+
+```bash
+npm run dev
 ```
 
 El servidor estará disponible en: **http://localhost:3000**
+
+Para desarrollo con recarga automática de CSS, ejecuta en otra terminal:
+
+```bash
+npm run dev:css
+```
+
+## 📜 Scripts Disponibles
+
+### Desarrollo
+
+- **`npm run dev`** - Inicia el servidor en modo desarrollo con nodemon (recarga automática)
+- **`npm run dev:css`** - Compila Tailwind CSS en modo watch (recarga automática de estilos)
+- **`npm run build:css`** - Compila Tailwind CSS una vez (sin minificar)
+- **`npm run build:css:watch`** - Compila Tailwind CSS en modo watch
+
+### Producción
+
+- **`npm run build`** - Compila TypeScript a JavaScript
+- **`npm run build:css`** - Compila y minifica Tailwind CSS para producción
+- **`npm start`** - Inicia el servidor en modo producción (requiere compilar primero)
+
+### Testing
+
+- **`npm test`** - Ejecuta los tests (pendiente de implementación)
+
+## 🎨 Desarrollo con EJS
+
+### Estructura de Plantillas
+
+El proyecto usa **EJS (Embedded JavaScript)** como motor de plantillas con **express-ejs-layouts** para layouts compartidos.
+
+#### Layouts
+
+- **`layouts/main.ejs`** - Layout principal con header, footer y navegación
+- **`layouts/auth.ejs`** - Layout simplificado para login/registro
+
+#### Partials
+
+Componentes reutilizables:
+
+- **`partials/header.ejs`** - Header con navegación y carrito
+- **`partials/footer.ejs`** - Footer con enlaces e información
+- **`partials/product-card.ejs`** - Tarjeta de producto
+- **`partials/cart-item.ejs`** - Item del carrito
+- **`partials/flash-messages.ejs`** - Mensajes de éxito/error
+
+#### Páginas
+
+- **`pages/home.ejs`** - Página de inicio
+- **`pages/store.ejs`** - Tienda con filtros
+- **`pages/product-detail.ejs`** - Detalle de producto
+- **`pages/cart.ejs`** - Carrito de compras
+- **`pages/checkout.ejs`** - Checkout (protegida)
+- **`pages/favorites.ejs`** - Favoritos
+- **`pages/login.ejs`** - Inicio de sesión
+- **`pages/register.ejs`** - Registro
+- **`pages/admin-product.ejs`** - Panel de administración (admin)
+- **`pages/access-denied.ejs`** - Acceso denegado
+- **`pages/not-found.ejs`** - 404
+
+### Variables Locales Globales
+
+Todas las plantillas tienen acceso a estas variables:
+
+```javascript
+{
+  user: { id, email, name, isAdmin } | null,
+  isAuthenticated: boolean,
+  cartCount: number,
+  success: string[],  // Mensajes flash de éxito
+  error: string[],    // Mensajes flash de error
+  currentPath: string,
+  title: string
+}
+```
+
+### Ejemplo de Uso de Partials
+
+```ejs
+<!-- Incluir un partial sin datos -->
+<%- include('../partials/header') %>
+
+<!-- Incluir un partial con datos -->
+<%- include('../partials/product-card', { product: product }) %>
+
+<!-- Iterar y renderizar partials -->
+<% products.forEach(product => { %>
+  <%- include('../partials/product-card', { product: product }) %>
+<% }) %>
+```
+
+## 🔐 Autenticación y Sesiones
+
+El backend usa **express-session** para gestión de sesiones del lado del servidor y **JWT** para la API REST.
+
+### Flujo de Autenticación (Vistas EJS)
+
+1. Usuario envía formulario de login/registro
+2. Backend valida credenciales
+3. Backend almacena usuario en la sesión
+4. Usuario es redirigido a la página apropiada
+5. Sesión persiste entre peticiones (cookie)
+
+### Flujo de Autenticación (API REST)
+
+1. Cliente envía credenciales a `/api/auth/login`
+2. Backend genera token JWT
+3. Cliente guarda el token
+4. Cliente envía el token en el header `Authorization: Bearer <token>`
+
+### Middleware de Protección
+
+- **`requireAuth`** - Requiere usuario autenticado
+- **`requireAdmin`** - Requiere usuario con rol admin
+- **`redirectIfAuth`** - Redirige si ya está autenticado (para login/register)
+
+### Superadmin Predefinido
+
+```
+Usuario: admin
+Contraseña: 1234567
+Nivel: admin
+```
+
+## 🛒 Gestión del Carrito
+
+El carrito se almacena en la **sesión del servidor** para usuarios autenticados y en **cookies** para usuarios anónimos.
+
+### Estructura del Carrito en Sesión
+
+```javascript
+req.session.cart = [
+  {
+    productId: "prod-123",
+    quantity: 2
+  }
+]
+```
+
+### API del Carrito
+
+- **POST `/api/cart/add`** - Agregar producto al carrito
+- **PUT `/api/cart/update`** - Actualizar cantidad
+- **DELETE `/api/cart/remove`** - Eliminar producto
+- **DELETE `/api/cart/clear`** - Vaciar carrito
+
+### JavaScript del Cliente
+
+El archivo `public/js/cart.js` maneja las interacciones del carrito sin recargar la página:
+
+- Agregar al carrito (AJAX)
+- Actualizar cantidad (AJAX)
+- Eliminar del carrito (AJAX)
+- Actualizar contador en el header
+
+## ⭐ Gestión de Favoritos
+
+Los favoritos se almacenan en la **sesión del servidor**.
+
+### Estructura de Favoritos en Sesión
+
+```javascript
+req.session.favorites = ["prod-123", "prod-456"]
+```
+
+### API de Favoritos
+
+- **POST `/api/favorites/add`** - Agregar a favoritos
+- **DELETE `/api/favorites/remove`** - Remover de favoritos
+
+## 🎨 Estilos con Tailwind CSS
+
+El proyecto usa **Tailwind CSS** con configuración personalizada.
+
+### Compilar Estilos
+
+```bash
+# Compilar una vez
+npm run build:css
+
+# Compilar en modo watch (desarrollo)
+npm run dev:css
+```
+
+### Archivo de Entrada
+
+- **`src/index.css`** - Archivo fuente con directivas de Tailwind y estilos personalizados
+
+### Archivo de Salida
+
+- **`public/css/styles.css`** - CSS compilado (incluido en layouts)
+
+### Configuración
+
+- **`tailwind.config.ts`** - Configuración de Tailwind (colores, fuentes, etc.)
+
+## 📚 Rutas Disponibles
+
+### Páginas Públicas
+
+- **GET `/`** - Página de inicio
+- **GET `/tienda`** - Tienda con filtros
+- **GET `/producto/:id`** - Detalle de producto
+- **GET `/carrito`** - Carrito de compras
+- **GET `/favoritos`** - Favoritos
+- **GET `/login`** - Inicio de sesión
+- **GET `/register`** - Registro
+
+### Páginas Protegidas
+
+- **GET `/checkout`** - Checkout (requiere autenticación)
+- **GET `/admin-products`** - Panel de administración (requiere admin)
+
+### Páginas de Error
+
+- **GET `/access-denied`** - Acceso denegado (403)
+- **GET `/*`** - Página no encontrada (404)
 
 ## 📚 Endpoints Disponibles
 

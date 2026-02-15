@@ -5,7 +5,7 @@
  */
 
 import { Router } from 'express';
-import { login, register, getProfile } from '../controllers/auth.controller';
+import { login, register, getProfile, logout } from '../controllers/auth.controller';
 import { authenticate } from '../middleware/auth';
 
 const router = Router();
@@ -21,6 +21,12 @@ router.post('/login', login);
  * Registro de nuevo usuario
  */
 router.post('/register', register);
+
+/**
+ * POST /api/auth/logout
+ * Logout de usuario
+ */
+router.post('/logout', logout);
 
 /**
  * GET /api/auth/me
