@@ -25,6 +25,11 @@ import path from 'path';
 export function createApp(): Application {
   const app = express();
 
+  // Confiar en proxy de Render para HTTPS
+  if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+  }
+
   // Motor de plantillas EJS
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, '../views'));

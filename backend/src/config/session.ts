@@ -11,11 +11,12 @@ export const sessionConfig: session.SessionOptions = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production', // HTTPS en producción
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 días
-    sameSite: 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' para HTTPS cross-site
+    domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
   },
-  name: 'powerfit.sid'
+  name: 'powerfit.sid',
+  proxy: process.env.NODE_ENV === 'production' // Confiar en proxy de Render
 };
-
