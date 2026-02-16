@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run build:css",
     "build:css": "npx @tailwindcss/cli -i ./src/index.css -o ./public/css/styles.css --minify",
     "build:css:watch": "npx @tailwindcss/cli -i ./src/index.css -o ./public/css/styles.css --watch",
     "start": "NODE_ENV=production node dist/server.js",
