@@ -5,23 +5,19 @@
  * propiedades personalizadas como session, flash, etc.
  */
 
-declare global {
-  namespace Express {
-    interface Request {
-      session: any;
-      sessionID: string;
-      flash(type: string, message: string): void;
-      flash(type: string): string[];
-      flash(): { [key: string]: string[] };
-    }
+declare namespace Express {
+  interface Request {
+    session: any;
+    sessionID: string;
+    flash(type: string, message: string): void;
+    flash(type: string): string[];
+    flash(): { [key: string]: string[] };
+  }
 
-    interface User {
-      id: string;
-      email: string;
-      name: string;
-      isAdmin?: boolean;
-    }
+  interface User {
+    id: string;
+    email: string;
+    name: string;
+    isAdmin?: boolean;
   }
 }
-
-export {};
