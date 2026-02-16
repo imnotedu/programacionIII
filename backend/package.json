@@ -4,14 +4,15 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "build:css": "npx tailwindcss -i ./src/index.css -o ./public/css/styles.css --minify",
-    "build:css:watch": "npx tailwindcss -i ./src/index.css -o ./public/css/styles.css --watch",
+    "build:css": "npx @tailwindcss/cli -i ./src/index.css -o ./public/css/styles.css --minify",
+    "build:css:watch": "npx @tailwindcss/cli -i ./src/index.css -o ./public/css/styles.css --watch",
     "start": "NODE_ENV=production node dist/server.js",
     "dev": "nodemon",
     "dev:css": "npm run build:css:watch",
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
+    "@tailwindcss/cli": "^4.1.18",
     "@types/method-override": "^3.0.0",
     "@types/multer": "^2.0.0",
     "autoprefixer": "^10.4.24",
