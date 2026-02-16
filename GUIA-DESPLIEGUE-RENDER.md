@@ -54,14 +54,13 @@ En la configuración de tu servicio en Render:
 
 ### Build Command:
 ```bash
-cd backend && npm install && npm run build && npm run build:css
+cd backend && npm install && npm run build
 ```
 
 **Explicación:**
 - `cd backend` - Entra a la carpeta backend
 - `npm install` - Instala dependencias
-- `npm run build` - Compila TypeScript a JavaScript
-- `npm run build:css` - Genera CSS de Tailwind
+- `npm run build` - Compila TypeScript Y genera CSS de Tailwind (ahora en un solo comando)
 
 ### Start Command:
 ```bash

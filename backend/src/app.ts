@@ -73,7 +73,11 @@ export function createApp(): Application {
 
   // Archivos estáticos con configuración de caché optimizada
   // Requisitos: 15.1, 15.2, 15.3
-  app.use(express.static(path.join(__dirname, '../public'), {
+  const publicPath = path.join(__dirname, '../public');
+  console.log('📁 Sirviendo archivos estáticos desde:', publicPath);
+  console.log('📁 __dirname:', __dirname);
+  
+  app.use(express.static(publicPath, {
     maxAge: config.nodeEnv === 'production' ? '1y' : '1d', // 1 año en producción, 1 día en desarrollo
     etag: true,
     lastModified: true,
@@ -147,6 +151,22 @@ export function createApp(): Application {
   app.get('/test-ejs', (req, res) => {
     res.render('pages/test', {
       title: 'EJS Configuration Test - PowerFit'
+    });
+  });
+
+  // Test route to check if CSS file exists
+  app.get('/test-css-exists', (req, res) => {
+    const fs = require('fs');
+    const cssPath = path.join(__dirname, '../public/css/styles.css');
+    const exists = fs.existsSync(cssPath);
+    const stats = exists ? fs.statSync(cssPath) : null;
+    
+    res.json({
+      cssPath,
+      exists,
+      size: stats ? stats.size : 0,
+      __dirname,
+      publicPath: path.join(__dirname, '../public')
     });
   });
 
