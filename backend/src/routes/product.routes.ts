@@ -16,6 +16,7 @@ import {
     searchProducts
 } from '../controllers/product.controller';
 import { authenticate, requireAdmin } from '../middleware/auth';
+import { query } from '../config/database';
 
 const router = Router();
 
@@ -67,5 +68,27 @@ router.put('/:id', authenticate, requireAdmin, upload.single('image'), updatePro
  * Requiere: Autenticación + Admin
  */
 router.delete('/:id', authenticate, requireAdmin, deleteProduct);
+
+/**
+ * POST /api/products/reset-all
+ * Eliminar TODOS los productos (para desarrollo)
+ * Requiere: Autenticación + Admin
+ */
+router.post('/reset-all', authenticate, requireAdmin, async (req, res) => {
+    try {
+        await query('DELETE FROM cart_items');
+        await query('DELETE FROM products');
+        res.json({ 
+            success: true, 
+            message: 'Todos los productos eliminados. Reinicia el servidor para que se vuelvan a insertar.' 
+        });
+    } catch (error) {
+        console.error('Error eliminando productos:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error eliminando productos' 
+        });
+    }
+});
 
 export default router;

@@ -198,7 +198,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 54.99,
         description: "La proteína whey más vendida del mundo. 24g de proteína por porción, 5.5g de BCAAs y 4g de glutamina. Sabor Double Rich Chocolate. 2 lbs.",
         category: "Proteínas",
-        imageUrl: "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/ON-WH-001.avif",
         stock: 35,
       },
       {
@@ -207,7 +207,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 62.99,
         description: "Proteína hidrolizada y aislada de suero de leche. 25g de proteína, 0g de azúcar, digestión ultra rápida. Ideal post-entreno. 1.6 lbs.",
         category: "Proteínas",
-        imageUrl: "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/DYM-ISO-002.avif",
         stock: 22,
       },
       {
@@ -216,7 +216,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 47.99,
         description: "Proteína whey con péptidos y aislado de suero. 24g de proteína y 5.5g de BCAAs por porción. Fórmula premium. 2 lbs.",
         category: "Proteínas",
-        imageUrl: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/MT-NTG-003.avif",
         stock: 18,
       },
       {
@@ -225,7 +225,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 42.99,
         description: "Matriz de proteínas ultra-premium con 22g de proteína por porción. Mezcla de 6 fuentes de proteína para absorción sostenida. 2.91 lbs.",
         category: "Proteínas",
-        imageUrl: "https://images.unsplash.com/photo-1622484211850-cc1f8f6e3f6e?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/BSN-SY6-004.webp",
         stock: 28,
       },
       // RENDIMIENTO
@@ -235,7 +235,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 24.99,
         description: "Creatina monohidratada micronizada Creapure. 5g por porción, sin sabor, se mezcla fácilmente. Aumenta fuerza y potencia muscular. 300g.",
         category: "Rendimiento",
-        imageUrl: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/ON-CRE-005.avif",
         stock: 50,
       },
       {
@@ -244,7 +244,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 34.99,
         description: "Fórmula avanzada de creatina con carbohidratos de alto índice glucémico. 7g de creatina + sistema de transporte de nutrientes. 1.36 kg.",
         category: "Rendimiento",
-        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/MT-CT-006.avif",
         stock: 15,
       },
       {
@@ -253,7 +253,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 29.99,
         description: "Fórmula pre-entreno con 150mg de cafeína, CarnoSyn Beta-Alanina, creatina monohidratada y vitamina B12. Energía explosiva. 30 porciones.",
         category: "Rendimiento",
-        imageUrl: "https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/CEL-C4-007.webp",
         stock: 40,
       },
       // PRE-ENTRENO
@@ -263,7 +263,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 44.99,
         description: "Pre-entreno de alta potencia con 300mg de cafeína, 6g de citrulina, 3.2g de beta-alanina y Cognizin para enfoque mental. 20 porciones.",
         category: "Pre-entreno",
-        imageUrl: "https://images.unsplash.com/photo-1594737625785-8e8f133a5f4a?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/CEL-C4U-008.jpg",
         stock: 12,
       },
       {
@@ -272,7 +272,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 32.99,
         description: "Pre-entreno con 350mg de cafeína, 3g de beta-alanina y 1.5g de betaína. Energía intensa y pump vascular extremo. 20 porciones.",
         category: "Pre-entreno",
-        imageUrl: "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=400&h=400&fit=crop&sat=-50",
+        imageUrl: "/images/products/MT-SH-009.png",
         stock: 8,
       },
       {
@@ -281,7 +281,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 39.99,
         description: "Pre-entreno premium con dosis completas de citrulina (6g), beta-alanina (3.2g), cafeína (250mg) y nootrópicos. Fórmula transparente. 20 porciones.",
         category: "Pre-entreno",
-        imageUrl: "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&h=400&fit=crop&sat=-30",
+        imageUrl: "/images/products/GHO-LEG-010.avif",
         stock: 25,
       },
       // AMINOÁCIDOS
@@ -291,7 +291,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 27.99,
         description: "BCAAs 7g en ratio 2:1:1 con electrolitos y citrulina. Sin azúcar ni calorías. Recuperación muscular intra-entreno. 30 porciones.",
         category: "Aminoácidos",
-        imageUrl: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=400&fit=crop&hue=30",
+        imageUrl: "/images/products/XT-BCAA-011.avif",
         stock: 33,
       },
       {
@@ -300,7 +300,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 22.99,
         description: "Aminoácidos esenciales con 100mg de cafeína natural. Energía ligera + recuperación. Ideal para cualquier hora del día. 30 porciones.",
         category: "Aminoácidos",
-        imageUrl: "https://images.unsplash.com/photo-1622484211850-cc1f8f6e3f6e?w=400&h=400&fit=crop&hue=300",
+        imageUrl: "/images/products/ON-AE-012.webp",
         stock: 45,
       },
       {
@@ -309,7 +309,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 19.99,
         description: "L-Glutamina pura en polvo. 5g por porción para recuperación muscular y soporte del sistema inmune. Sin sabor. 300g.",
         category: "Aminoácidos",
-        imageUrl: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=400&h=400&fit=crop&sat=-20",
+        imageUrl: "/images/products/ON-GLU-013.jpg",
         stock: 30,
       },
       // GANADORES
@@ -319,7 +319,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 64.99,
         description: "Ganador de masa con 1,250 calorías, 50g de proteína y 252g de carbohidratos por porción. Incluye creatina y glutamina. 6 lbs.",
         category: "Ganadores",
-        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&hue=20",
+        imageUrl: "/images/products/ON-SM-014.avif",
         stock: 10,
       },
       {
@@ -328,7 +328,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 52.99,
         description: "Ganador de masa con 1,280 calorías, 52g de proteína y BCAAs. Fórmula con enzimas digestivas para mejor absorción. 6 lbs.",
         category: "Ganadores",
-        imageUrl: "https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=400&h=400&fit=crop&hue=15",
+        imageUrl: "/images/products/DYM-SMG-015.jpg",
         stock: 14,
       },
       {
@@ -337,7 +337,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 58.99,
         description: "Ganador ultra-premium con 1,220 calorías, 50g de proteína multi-fuente y grasas saludables de semillas de linaza y MCT. 4.73 kg.",
         category: "Ganadores",
-        imageUrl: "https://images.unsplash.com/photo-1594737625785-8e8f133a5f4a?w=400&h=400&fit=crop&hue=340",
+        imageUrl: "/images/products/BSN-TM-016.jpg",
         stock: 7,
       },
       // VITAMINAS
@@ -347,7 +347,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 21.99,
         description: "Multivitamínico para hombres activos con 75+ ingredientes. Incluye aminoácidos, antioxidantes, enzimas y minerales. 90 tabletas.",
         category: "Vitaminas",
-        imageUrl: "https://images.unsplash.com/photo-1550572017-4a6e8e8e1f3f?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/ON-OM-017.avif",
         stock: 42,
       },
       {
@@ -356,7 +356,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 14.99,
         description: "Aceite de pescado molecularmente destilado con 180mg EPA y 120mg DHA. Soporte cardiovascular y articular. 200 cápsulas.",
         category: "Vitaminas",
-        imageUrl: "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/NOW-OM3-018.avif",
         stock: 60,
       },
       {
@@ -365,7 +365,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 11.99,
         description: "Vitamina D3 para soporte óseo, muscular e inmunológico. 2000 IU por softgel. Formulación farmacéutica. 220 softgels.",
         category: "Vitaminas",
-        imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=400&fit=crop",
+        imageUrl: "/images/products/NM-VD3-019.avif",
         stock: 55,
       },
       {
@@ -374,7 +374,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
         price: 18.99,
         description: "Combinación de Zinc, Magnesio y Vitamina B6 para recuperación nocturna, soporte hormonal y calidad de sueño. 90 cápsulas.",
         category: "Vitaminas",
-        imageUrl: "https://images.unsplash.com/photo-1550572017-4a6e8e8e1f3f?w=400&h=400&fit=crop&sat=-30",
+        imageUrl: "/images/products/ON-ZMA-020.avif",
         stock: 38,
       },
     ];
@@ -399,7 +399,7 @@ export async function seedProductsIfEmpty(): Promise<void> {
       ]);
     }
 
-    console.log(`✅ ${products.length} productos insertados exitosamente con imágenes de internet`);
+    console.log(`✅ ${products.length} productos insertados exitosamente con imágenes locales`);
   } catch (error) {
     console.error('❌ Error en seed de productos:', error);
   }
