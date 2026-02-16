@@ -5,8 +5,8 @@
   "scripts": {
     "build": "npm run build:ts && npm run build:css && npm run verify-build",
     "build:ts": "tsc",
-    "build:css": "npx @tailwindcss/cli -i ./src/index.css -o ./public/css/styles.css --minify",
-    "build:css:watch": "npx @tailwindcss/cli -i ./src/index.css -o ./public/css/styles.css --watch",
+    "build:css": "npx tailwindcss -i ./src/index.css -o ./public/css/styles.css --minify",
+    "build:css:watch": "npx tailwindcss -i ./src/index.css -o ./public/css/styles.css --watch",
     "verify-build": "node -e \"const fs=require('fs');const p='./public/css/styles.css';if(fs.existsSync(p)){const s=fs.statSync(p).size;console.log('✅ CSS generado:',s,'bytes');if(s<1000){console.error('⚠️ CSS muy pequeño, puede estar vacío');}}else{console.error('❌ CSS NO encontrado');process.exit(1);}\"",
     "start": "NODE_ENV=production node dist/server.js",
     "dev": "nodemon",
@@ -14,7 +14,6 @@
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
-    "@tailwindcss/cli": "^4.1.18",
     "@types/method-override": "^3.0.0",
     "@types/multer": "^2.0.0",
     "autoprefixer": "^10.4.24",
@@ -33,7 +32,7 @@
     "method-override": "^3.0.0",
     "multer": "^2.0.2",
     "pg": "^8.18.0",
-    "tailwindcss": "^4.1.18",
+    "tailwindcss": "^3.4.19",
     "zod": "^4.3.6"
   },
   "devDependencies": {
