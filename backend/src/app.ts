@@ -167,6 +167,22 @@ export function createApp(): Application {
     });
   }
 
+  // RUTA EXPLÍCITA PARA CSS (TEMPORAL - PARA DEBUGGING)
+  app.get('/css/styles.css', (req, res) => {
+    const fs = require('fs');
+    const cssPath = path.join(__dirname, '../public/css/styles.css');
+    console.log('🎯 Request directo a CSS:', cssPath);
+    
+    if (fs.existsSync(cssPath)) {
+      console.log('✅ Archivo encontrado, enviando...');
+      res.setHeader('Content-Type', 'text/css');
+      res.sendFile(cssPath);
+    } else {
+      console.log('❌ Archivo NO encontrado');
+      res.status(404).send('CSS not found');
+    }
+  });
+
   // Rutas de vistas (montar antes de las rutas de API)
   // Requisitos: 5.1, 5.8
   app.use('/', viewRoutes);
