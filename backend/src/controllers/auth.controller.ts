@@ -62,11 +62,20 @@ export async function login(
       isAdmin: user.level === 'admin'
     };
 
-    // Establecer mensaje de éxito
-    req.flash('success', `¡Bienvenido, ${user.name}!`);
-    
-    // Redirigir a la página de inicio
-    res.redirect('/');
+    // Guardar sesión explícitamente antes de redirigir
+    req.session.save((err) => {
+      if (err) {
+        console.error('Error guardando sesión:', err);
+        req.flash('error', 'Error al iniciar sesión');
+        return res.redirect('/login');
+      }
+
+      // Establecer mensaje de éxito
+      req.flash('success', `¡Bienvenido, ${user.name}!`);
+      
+      // Redirigir a la página de inicio
+      res.redirect('/');
+    });
   } catch (error) {
     next(error);
   }
