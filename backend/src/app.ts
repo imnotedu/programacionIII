@@ -74,8 +74,25 @@ export function createApp(): Application {
   // Archivos estáticos con configuración de caché optimizada
   // Requisitos: 15.1, 15.2, 15.3
   const publicPath = path.join(__dirname, '../public');
+  
   console.log('📁 Sirviendo archivos estáticos desde:', publicPath);
   console.log('📁 __dirname:', __dirname);
+  console.log('📁 NODE_ENV:', config.nodeEnv);
+  
+  // Verificar si la carpeta existe
+  const fs = require('fs');
+  if (fs.existsSync(publicPath)) {
+    console.log('✅ La carpeta public existe');
+    const cssPath = path.join(publicPath, 'css/styles.css');
+    if (fs.existsSync(cssPath)) {
+      const stats = fs.statSync(cssPath);
+      console.log('✅ El archivo CSS existe:', stats.size, 'bytes');
+    } else {
+      console.log('❌ El archivo CSS NO existe en:', cssPath);
+    }
+  } else {
+    console.log('❌ La carpeta public NO existe en:', publicPath);
+  }
   
   app.use(express.static(publicPath, {
     maxAge: config.nodeEnv === 'production' ? '1y' : '1d', // 1 año en producción, 1 día en desarrollo
@@ -157,16 +174,35 @@ export function createApp(): Application {
   // Test route to check if CSS file exists
   app.get('/test-css-exists', (req, res) => {
     const fs = require('fs');
-    const cssPath = path.join(__dirname, '../public/css/styles.css');
+    const publicPath = path.join(__dirname, '../public');
+    const cssPath = path.join(publicPath, 'css/styles.css');
     const exists = fs.existsSync(cssPath);
     const stats = exists ? fs.statSync(cssPath) : null;
     
+    // List files in public directory
+    let publicFiles = [];
+    if (fs.existsSync(publicPath)) {
+      publicFiles = fs.readdirSync(publicPath);
+    }
+    
+    // List files in public/css directory
+    let cssFiles = [];
+    const cssDir = path.join(publicPath, 'css');
+    if (fs.existsSync(cssDir)) {
+      cssFiles = fs.readdirSync(cssDir);
+    }
+    
     res.json({
-      cssPath,
-      exists,
-      size: stats ? stats.size : 0,
+      nodeEnv: config.nodeEnv,
       __dirname,
-      publicPath: path.join(__dirname, '../public')
+      publicPath,
+      publicExists: fs.existsSync(publicPath),
+      publicFiles,
+      cssPath,
+      cssExists: exists,
+      cssSize: stats ? stats.size : 0,
+      cssDir,
+      cssFiles
     });
   });
 
