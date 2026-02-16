@@ -172,15 +172,32 @@ export function createApp(): Application {
     const fs = require('fs');
     const cssPath = path.join(__dirname, '../public/css/styles.css');
     console.log('🎯 Request directo a CSS:', cssPath);
+    console.log('🎯 Headers del request:', req.headers);
     
     if (fs.existsSync(cssPath)) {
       console.log('✅ Archivo encontrado, enviando...');
       res.setHeader('Content-Type', 'text/css');
+      res.setHeader('Cache-Control', 'no-cache');
       res.sendFile(cssPath);
     } else {
       console.log('❌ Archivo NO encontrado');
       res.status(404).send('CSS not found');
     }
+  });
+  
+  // ENDPOINT DE DIAGNÓSTICO: Ver el HTML que se genera
+  app.get('/debug-html', (req, res) => {
+    res.render('pages/home', {
+      title: 'PowerFit - Suplementos Deportivos',
+      layout: false // Renderizar sin layout para ver el HTML completo
+    }, (err, html) => {
+      if (err) {
+        res.status(500).send('Error: ' + err.message);
+      } else {
+        res.setHeader('Content-Type', 'text/plain');
+        res.send(html);
+      }
+    });
   });
 
   // Rutas de vistas (montar antes de las rutas de API)
