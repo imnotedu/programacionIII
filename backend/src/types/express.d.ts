@@ -5,25 +5,11 @@
  * propiedades personalizadas como session, flash, etc.
  */
 
-import 'express-session';
-
 declare global {
   namespace Express {
     interface Request {
-      session: import('express-session').Session & {
-        user?: {
-          id: string;
-          email: string;
-          name: string;
-          isAdmin?: boolean;
-        };
-        cart?: Array<{
-          productId: string;
-          quantity: number;
-        }>;
-        favorites?: string[];
-        visitCount?: number;
-      };
+      session: any;
+      sessionID: string;
       flash(type: string, message: string): void;
       flash(type: string): string[];
       flash(): { [key: string]: string[] };
