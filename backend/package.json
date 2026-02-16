@@ -4,8 +4,8 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "build:css": "tailwindcss -i ./src/index.css -o ./public/css/styles.css --minify",
-    "build:css:watch": "tailwindcss -i ./src/index.css -o ./public/css/styles.css --watch",
+    "build:css": "npx tailwindcss -i ./src/index.css -o ./public/css/styles.css --minify",
+    "build:css:watch": "npx tailwindcss -i ./src/index.css -o ./public/css/styles.css --watch",
     "start": "NODE_ENV=production node dist/server.js",
     "dev": "nodemon",
     "dev:css": "npm run build:css:watch",
