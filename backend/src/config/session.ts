@@ -19,20 +19,3 @@ export const sessionConfig: session.SessionOptions = {
   name: 'powerfit.sid'
 };
 
-// Tipos de sesión
-declare module 'express-session' {
-  interface SessionData {
-    user?: {
-      id: string;
-      email: string;
-      name: string;
-      isAdmin?: boolean;
-    };
-    cart?: Array<{
-      productId: string;
-      quantity: number;
-    }>;
-    favorites?: string[];
-    visitCount?: number;
-  }
-}
