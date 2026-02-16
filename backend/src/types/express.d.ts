@@ -1,15 +1,41 @@
 /**
  * Extensiones de tipos para Express
  * 
- * Agrega tipos para connect-flash y otras extensiones.
+ * Este archivo extiende los tipos de Express para incluir
+ * propiedades personalizadas como session, flash, etc.
  */
 
-import 'express';
+import 'express-session';
 
 declare global {
   namespace Express {
     interface Request {
-      flash(type: string, message?: string): string[] | void;
+      session: import('express-session').Session & {
+        user?: {
+          id: string;
+          email: string;
+          name: string;
+          isAdmin?: boolean;
+        };
+        cart?: Array<{
+          productId: string;
+          quantity: number;
+        }>;
+        favorites?: string[];
+        visitCount?: number;
+      };
+      flash(type: string, message: string): void;
+      flash(type: string): string[];
+      flash(): { [key: string]: string[] };
+    }
+
+    interface User {
+      id: string;
+      email: string;
+      name: string;
+      isAdmin?: boolean;
     }
   }
 }
+
+export {};
