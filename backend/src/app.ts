@@ -71,7 +71,14 @@ export function createApp(): Application {
   // Cookie parser
   app.use(cookieParser());
 
+  // Sesiones
+  app.use(session(sessionConfig));
+
+  // Flash messages
+  app.use(flash());
+
   // Archivos estáticos con configuración de caché optimizada
+  // IMPORTANTE: Debe estar ANTES de las rutas para que Express pueda servir los archivos
   // Requisitos: 15.1, 15.2, 15.3
   const publicPath = path.join(__dirname, '../public');
   
@@ -94,11 +101,20 @@ export function createApp(): Application {
     console.log('❌ La carpeta public NO existe en:', publicPath);
   }
   
+  // Log de requests a archivos estáticos
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/css/') || req.path.startsWith('/js/') || req.path.startsWith('/images/')) {
+      console.log('🔍 Request a archivo estático:', req.method, req.path);
+    }
+    next();
+  });
+  
   app.use(express.static(publicPath, {
     maxAge: config.nodeEnv === 'production' ? '1y' : '1d', // 1 año en producción, 1 día en desarrollo
     etag: true,
     lastModified: true,
     setHeaders: (res, filePath) => {
+      console.log('📤 Sirviendo archivo:', filePath);
       // Configurar caché específico por tipo de archivo
       if (filePath.endsWith('.css')) {
         // CSS: 1 año en producción, 1 día en desarrollo
@@ -121,12 +137,6 @@ export function createApp(): Application {
       }
     }
   }));
-
-  // Sesiones
-  app.use(session(sessionConfig));
-
-  // Flash messages
-  app.use(flash());
 
   // Variables locales globales
   app.use((req, res, next) => {
