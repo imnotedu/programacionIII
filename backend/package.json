@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc && npm run build:css",
+    "build": "tsc && npm run build:css && npm run verify-build",
     "build:css": "npx @tailwindcss/cli -i ./src/index.css -o ./public/css/styles.css --minify",
+    "verify-build": "node -e \"const fs=require('fs'); const path='./public/css/styles.css'; if(fs.existsSync(path)){const size=fs.statSync(path).size; console.log('✅ CSS generado:',size,'bytes'); if(size<10000){console.error('⚠️ CSS muy pequeño!'); process.exit(1);}}else{console.error('❌ CSS no encontrado!'); process.exit(1);}\"",
     "build:css:watch": "npx @tailwindcss/cli -i ./src/index.css -o ./public/css/styles.css --watch",
     "start": "NODE_ENV=production node dist/server.js",
     "dev": "nodemon",
