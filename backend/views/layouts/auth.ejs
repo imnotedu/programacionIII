@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title || 'PowerFit' %></title>
+  <title>
+    <%= title || 'PowerFit' %>
+  </title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <%- typeof style !=='undefined' ? style : '' %>
 </head>
-<body class="min-h-screen bg-charcoal flex items-center justify-center p-4">
+
+<body style="margin:0; padding:0; min-height:100vh; font-family:Inter,system-ui,sans-serif;">
   <%- include('../partials/flash-messages') %>
-  
-  <div class="w-full max-w-md">
+
     <%- body %>
-  </div>
-  
-  <script src="/js/forms.js"></script>
+
+      <script src="/js/forms.js"></script>
+      <%- typeof script !=='undefined' ? script : '' %>
 </body>
+
 </html>

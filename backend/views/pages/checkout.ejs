@@ -1,10 +1,8 @@
 <div class="min-h-screen flex flex-col">
   <main class="flex-1 py-8 md:py-12">
     <div class="container mx-auto px-4">
-      <a
-        href="/carrito"
-        class="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
-      >
+      <a href="/carrito"
+        class="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
@@ -15,14 +13,16 @@
 
       <div class="grid lg:grid-cols-2 gap-8">
         <!-- Form -->
-        <form action="/api/checkout/process" method="POST" class="space-y-8" data-validate>
+        <form action="/api/cart/checkout" method="POST" id="checkout-form" class="space-y-8">
           <!-- Shipping Info -->
           <div class="bg-card border border-border rounded-xl p-6">
             <div class="flex items-center gap-3 mb-6">
               <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                 <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
               </div>
               <h2 class="text-lg font-semibold text-foreground">
@@ -36,73 +36,39 @@
                   <label for="name" class="block text-sm font-medium text-foreground mb-2">
                     Nombre completo
                   </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    class="input-field"
-                    placeholder="Tu nombre"
-                    required
-                  />
-                  <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+                  <input type="text" id="name" name="name" class="input-field" placeholder="Tu nombre" required minlength="3" />
+                  <p class="error-message text-xs text-destructive mt-1 hidden">El nombre debe tener al menos 3 caracteres</p>
                 </div>
                 <div>
                   <label for="email" class="block text-sm font-medium text-foreground mb-2">
                     Correo electrónico
                   </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    class="input-field"
-                    placeholder="tu@email.com"
-                    required
-                  />
-                  <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+                  <input type="email" id="email" name="email" class="input-field" placeholder="tu@email.com" required />
+                  <p class="error-message text-xs text-destructive mt-1 hidden">Ingresa un correo válido</p>
                 </div>
               </div>
               <div>
                 <label for="address" class="block text-sm font-medium text-foreground mb-2">
                   Dirección
                 </label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  class="input-field"
-                  placeholder="Calle y número"
-                  required
-                />
-                <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+                <input type="text" id="address" name="address" class="input-field" placeholder="Calle y número"
+                  required minlength="5" />
+                <p class="error-message text-xs text-destructive mt-1 hidden">La dirección debe tener al menos 5 caracteres</p>
               </div>
               <div class="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label for="city" class="block text-sm font-medium text-foreground mb-2">
                     Ciudad
                   </label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    class="input-field"
-                    placeholder="Tu ciudad"
-                    required
-                  />
-                  <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+                  <input type="text" id="city" name="city" class="input-field" placeholder="Tu ciudad" required minlength="2" />
+                  <p class="error-message text-xs text-destructive mt-1 hidden">La ciudad debe tener al menos 2 caracteres</p>
                 </div>
                 <div>
                   <label for="zipCode" class="block text-sm font-medium text-foreground mb-2">
                     Código postal
                   </label>
-                  <input
-                    type="text"
-                    id="zipCode"
-                    name="zipCode"
-                    class="input-field"
-                    placeholder="12345"
-                    required
-                  />
-                  <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+                  <input type="text" id="zipCode" name="zipCode" class="input-field" placeholder="12345" required pattern="[0-9]{4,5}" />
+                  <p class="error-message text-xs text-destructive mt-1 hidden">Código postal inválido (4-5 dígitos)</p>
                 </div>
               </div>
             </div>
@@ -113,7 +79,8 @@
             <div class="flex items-center gap-3 mb-6">
               <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                 <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
                 </svg>
               </div>
               <h2 class="text-lg font-semibold text-foreground">
@@ -126,44 +93,50 @@
                 <label for="cardNumber" class="block text-sm font-medium text-foreground mb-2">
                   Número de tarjeta
                 </label>
-                <input
-                  type="text"
-                  id="cardNumber"
-                  name="cardNumber"
-                  class="input-field"
-                  placeholder="1234 5678 9012 3456"
-                  required
+                <input 
+                  type="text" 
+                  id="cardNumber" 
+                  name="cardNumber" 
+                  class="input-field font-mono"
+                  placeholder="1234 5678 9012 3456" 
+                  required 
+                  maxlength="19"
+                  pattern="[0-9\s]{15,19}"
                 />
-                <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+                <p class="error-message text-xs text-destructive mt-1 hidden">Número de tarjeta inválido (16 dígitos)</p>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label for="cardExpiry" class="block text-sm font-medium text-foreground mb-2">
                     Expiración
                   </label>
-                  <input
-                    type="text"
-                    id="cardExpiry"
-                    name="cardExpiry"
-                    class="input-field"
+                  <input 
+                    type="text" 
+                    id="cardExpiry" 
+                    name="cardExpiry" 
+                    class="input-field font-mono" 
                     placeholder="MM/AA"
-                    required
+                    required 
+                    maxlength="5"
+                    pattern="(0[1-9]|1[0-2])\/[0-9]{2}"
                   />
-                  <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+                  <p class="error-message text-xs text-destructive mt-1 hidden">Formato: MM/AA</p>
                 </div>
                 <div>
                   <label for="cardCvc" class="block text-sm font-medium text-foreground mb-2">
                     CVC
                   </label>
-                  <input
-                    type="text"
-                    id="cardCvc"
-                    name="cardCvc"
-                    class="input-field"
-                    placeholder="123"
-                    required
+                  <input 
+                    type="text" 
+                    id="cardCvc" 
+                    name="cardCvc" 
+                    class="input-field font-mono" 
+                    placeholder="123" 
+                    required 
+                    maxlength="4"
+                    pattern="[0-9]{3,4}"
                   />
-                  <p class="error-message text-xs text-destructive mt-1 hidden"></p>
+                  <p class="error-message text-xs text-destructive mt-1 hidden">CVC inválido (3-4 dígitos)</p>
                 </div>
               </div>
             </div>
@@ -173,10 +146,7 @@
             </p>
           </div>
 
-          <button
-            type="submit"
-            class="btn-primary w-full"
-          >
+          <button type="submit" id="submit-btn" class="btn-primary w-full">
             Pagar $<%= total.toFixed(2) %>
           </button>
         </form>
@@ -192,12 +162,8 @@
               <% items.forEach(function(item) { %>
                 <div class="flex gap-3">
                   <div class="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                    <img
-                      src="<%= item.product.image %>"
-                      alt="<%= item.product.name %>"
-                      class="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                    <img src="<%= item.product.image %>" alt="<%= item.product.name %>"
+                      class="w-full h-full object-cover" loading="lazy" />
                   </div>
                   <div class="flex-1 min-w-0">
                     <p class="font-medium text-foreground text-sm line-clamp-1">
@@ -211,7 +177,7 @@
                     </p>
                   </div>
                 </div>
-              <% }); %>
+                <% }); %>
             </div>
 
             <div class="space-y-3 border-t border-border pt-4">
@@ -222,14 +188,14 @@
               <div class="flex justify-between text-sm">
                 <span class="text-muted-foreground">Envío</span>
                 <span class="text-foreground">
-                  <%= total >= 50 ? 'Gratis' : '$5.99' %>
+                  <%= total>= 50 ? 'Gratis' : '$5.99' %>
                 </span>
               </div>
               <div class="border-t border-border pt-3">
                 <div class="flex justify-between">
                   <span class="font-semibold text-foreground">Total</span>
                   <span class="font-bold text-xl text-foreground">
-                    $<%= (total + (total >= 50 ? 0 : 5.99)).toFixed(2) %>
+                    $<%= (total + (total>= 50 ? 0 : 5.99)).toFixed(2) %>
                   </span>
                 </div>
               </div>
@@ -241,4 +207,156 @@
   </main>
 </div>
 
-<script src="/js/forms.js"></script>
+<script>
+  // Formateo automático de número de tarjeta
+  const cardNumber = document.getElementById('cardNumber');
+  cardNumber.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\s/g, '');
+    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+    e.target.value = formattedValue;
+    
+    // Validar y mostrar error
+    const errorMsg = e.target.nextElementSibling;
+    if (value.length > 0 && value.length < 13) {
+      errorMsg.classList.remove('hidden');
+    } else {
+      errorMsg.classList.add('hidden');
+    }
+  });
+
+  // Formateo automático de fecha de expiración
+  const cardExpiry = document.getElementById('cardExpiry');
+  cardExpiry.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+      value = value.slice(0, 2) + '/' + value.slice(2, 4);
+    }
+    e.target.value = value;
+    
+    // Validar fecha
+    const errorMsg = e.target.nextElementSibling;
+    if (value.length === 5) {
+      const [month, year] = value.split('/').map(Number);
+      const currentYear = new Date().getFullYear() % 100;
+      const currentMonth = new Date().getMonth() + 1;
+      
+      if (month < 1 || month > 12) {
+        errorMsg.textContent = 'Mes inválido (01-12)';
+        errorMsg.classList.remove('hidden');
+      } else if (year < currentYear || (year === currentYear && month < currentMonth)) {
+        errorMsg.textContent = 'Tarjeta expirada';
+        errorMsg.classList.remove('hidden');
+      } else {
+        errorMsg.classList.add('hidden');
+      }
+    } else if (value.length > 0) {
+      errorMsg.textContent = 'Formato: MM/AA';
+      errorMsg.classList.remove('hidden');
+    } else {
+      errorMsg.classList.add('hidden');
+    }
+  });
+
+  // Validar CVC (solo números)
+  const cardCvc = document.getElementById('cardCvc');
+  cardCvc.addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/\D/g, '');
+    
+    const errorMsg = e.target.nextElementSibling;
+    if (e.target.value.length > 0 && e.target.value.length < 3) {
+      errorMsg.classList.remove('hidden');
+    } else {
+      errorMsg.classList.add('hidden');
+    }
+  });
+
+  // Validar código postal (solo números)
+  const zipCode = document.getElementById('zipCode');
+  zipCode.addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/\D/g, '');
+  });
+
+  // Validación del formulario
+  const form = document.getElementById('checkout-form');
+  const submitBtn = document.getElementById('submit-btn');
+  
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Validar todos los campos
+    let isValid = true;
+    const inputs = form.querySelectorAll('input[required]');
+    
+    inputs.forEach(input => {
+      if (!input.checkValidity()) {
+        isValid = false;
+        const errorMsg = input.nextElementSibling;
+        if (errorMsg && errorMsg.classList.contains('error-message')) {
+          errorMsg.classList.remove('hidden');
+        }
+      }
+    });
+    
+    if (!isValid) {
+      return;
+    }
+    
+    // Deshabilitar botón y mostrar loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `
+      <svg class="animate-spin h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    `;
+    
+    // Simular procesamiento de pago (1-2 segundos)
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Enviar formulario
+    try {
+      const formData = new FormData(form);
+      const response = await fetch('/api/cart/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Mostrar mensaje de éxito
+        document.body.innerHTML = `
+          <div class="min-h-screen flex items-center justify-center bg-background p-4">
+            <div class="max-w-md w-full bg-card border border-border rounded-xl p-8 text-center">
+              <div class="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h1 class="text-2xl font-bold text-foreground mb-2">¡Pago Realizado!</h1>
+              <p class="text-muted-foreground mb-6">
+                Tu compra ha sido procesada exitosamente. Recibirás un correo de confirmación pronto.
+              </p>
+              <div class="bg-muted/50 rounded-lg p-4 mb-6">
+                <p class="text-sm text-muted-foreground mb-1">Productos procesados</p>
+                <p class="text-2xl font-bold text-foreground">${data.data.itemsProcessed}</p>
+              </div>
+              <a href="/tienda" class="btn-primary w-full inline-block">
+                Volver a la tienda
+              </a>
+            </div>
+          </div>
+        `;
+      } else {
+        throw new Error(data.message || 'Error al procesar el pago');
+      }
+    } catch (error) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Pagar $<%= total.toFixed(2) %>';
+      alert('Error al procesar el pago: ' + error.message);
+    }
+  });
+</script>

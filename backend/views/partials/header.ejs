@@ -5,7 +5,7 @@
       <a href="/" class="flex items-center gap-2 group" aria-label="PowerFit - Ir a inicio">
         <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transition-transform group-hover:scale-105" aria-hidden="true">
           <svg class="w-6 h-6 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h1a4 4 0 110 8h-1M3 8h1a4 4 0 100 8H3M6 8v8m12-8v8M9 12h6"></path>
           </svg>
         </div>
         <span class="text-xl font-bold text-foreground hidden sm:block">
@@ -21,8 +21,11 @@
         <a href="/tienda" class="nav-link <%= currentPath === '/tienda' ? 'text-primary font-semibold' : '' %>" aria-current="<%= currentPath === '/tienda' ? 'page' : 'false' %>">
           Tienda
         </a>
-        <a href="/#destacados" class="nav-link">
-          Descuentos
+        <a href="/#populares" class="nav-link">
+          Populares
+        </a>
+        <a href="/#contacto" class="nav-link">
+          Contacto
         </a>
       </nav>
 
@@ -95,8 +98,11 @@
         <a href="/tienda" class="text-lg font-medium <%= currentPath === '/tienda' ? 'text-primary' : 'text-foreground' %>" aria-current="<%= currentPath === '/tienda' ? 'page' : 'false' %>">
           Tienda
         </a>
-        <a href="/#destacados" class="text-lg font-medium text-foreground">
-          Descuentos
+        <a href="/#populares" class="text-lg font-medium text-foreground">
+          Populares
+        </a>
+        <a href="/#contacto" class="text-lg font-medium text-foreground">
+          Contacto
         </a>
         <% if (isAuthenticated) { %>
           <form action="/api/auth/logout" method="POST">

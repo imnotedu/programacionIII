@@ -21,10 +21,10 @@ export class ViewController {
     try {
       const { data: response } = await axios.get(`${API_BASE}/products`);
       const products = response.data.products || [];
-      
+
       const featuredProducts = products.slice(0, 4);
       const saleProducts = products.filter((p: any) => p.isSale);
-      
+
       res.render('pages/home', {
         title: 'PowerFit - Suplementos Deportivos',
         featuredProducts,
@@ -51,7 +51,7 @@ export class ViewController {
     try {
       // Obtener parámetros de filtrado
       const { category, search, minPrice, maxPrice } = req.query;
-      
+
       // Obtener todos los productos de la API
       let products = [];
       try {
@@ -125,25 +125,25 @@ export class ViewController {
           }
         ];
       }
-      
+
       // Aplicar filtros en el servidor
-      
+
       // Filtro por búsqueda de texto (nombre o descripción)
       if (search && typeof search === 'string' && search.trim()) {
         const searchLower = search.toLowerCase().trim();
-        products = products.filter((p: any) => 
-          p.name.toLowerCase().includes(searchLower) || 
+        products = products.filter((p: any) =>
+          p.name.toLowerCase().includes(searchLower) ||
           p.description.toLowerCase().includes(searchLower)
         );
       }
-      
+
       // Filtro por categoría
       if (category && typeof category === 'string' && category.trim()) {
-        products = products.filter((p: any) => 
+        products = products.filter((p: any) =>
           p.category.toLowerCase() === category.toLowerCase().trim()
         );
       }
-      
+
       // Filtro por precio mínimo
       if (minPrice && typeof minPrice === 'string') {
         const min = parseFloat(minPrice);
@@ -151,7 +151,7 @@ export class ViewController {
           products = products.filter((p: any) => p.price >= min);
         }
       }
-      
+
       // Filtro por precio máximo
       if (maxPrice && typeof maxPrice === 'string') {
         const max = parseFloat(maxPrice);
@@ -159,7 +159,7 @@ export class ViewController {
           products = products.filter((p: any) => p.price <= max);
         }
       }
-      
+
       res.render('pages/store', {
         title: 'Tienda - PowerFit',
         products,
@@ -188,9 +188,9 @@ export class ViewController {
       const id = req.params.id as string;
       const { data: response } = await axios.get(`${API_BASE}/products/${id}`);
       const product = response.data.product;
-      
+
       const isFavorite = req.session.favorites?.includes(id) || false;
-      
+
       res.render('pages/product-detail', {
         title: `${product.name} - PowerFit`,
         product,
@@ -212,11 +212,11 @@ export class ViewController {
     try {
       const cartItems = req.session.cart || [];
       const productIds = cartItems.map(item => item.productId);
-      
+
       let products: any[] = [];
       if (productIds.length > 0) {
         // Obtener productos uno por uno ya que no existe endpoint batch
-        const productPromises = productIds.map(id => 
+        const productPromises = productIds.map(id =>
           axios.get(`${API_BASE}/products/${id}`).catch(() => null)
         );
         const responses = await Promise.all(productPromises);
@@ -224,7 +224,7 @@ export class ViewController {
           .filter(res => res !== null)
           .map(res => res!.data.data.product);
       }
-      
+
       const items = cartItems.map(cartItem => {
         const product = products.find((p: any) => p.id === cartItem.productId);
         return {
@@ -233,9 +233,9 @@ export class ViewController {
           subtotal: product ? product.price * cartItem.quantity : 0
         };
       }).filter(item => item.product); // Filtrar items sin producto
-      
+
       const total = items.reduce((sum, item) => sum + item.subtotal, 0);
-      
+
       res.render('pages/cart', {
         title: 'Carrito - PowerFit',
         items,
@@ -263,19 +263,19 @@ export class ViewController {
       req.flash('error', 'Tu carrito está vacío');
       return res.redirect('/carrito');
     }
-    
+
     try {
       const productIds = cartItems.map(item => item.productId);
-      
+
       // Obtener productos uno por uno
-      const productPromises = productIds.map(id => 
+      const productPromises = productIds.map(id =>
         axios.get(`${API_BASE}/products/${id}`).catch(() => null)
       );
       const responses = await Promise.all(productPromises);
       const products = responses
         .filter(res => res !== null)
         .map(res => res!.data.data.product);
-      
+
       const items = cartItems.map(cartItem => {
         const product = products.find((p: any) => p.id === cartItem.productId);
         return {
@@ -284,9 +284,9 @@ export class ViewController {
           subtotal: product ? product.price * cartItem.quantity : 0
         };
       }).filter(item => item.product);
-      
+
       const total = items.reduce((sum, item) => sum + item.subtotal, 0);
-      
+
       res.render('pages/checkout', {
         title: 'Checkout - PowerFit',
         items,
@@ -307,11 +307,11 @@ export class ViewController {
   async favorites(req: Request, res: Response): Promise<void> {
     try {
       const favoriteIds = req.session.favorites || [];
-      
+
       let products: any[] = [];
       if (favoriteIds.length > 0) {
         // Obtener productos uno por uno
-        const productPromises = favoriteIds.map(id => 
+        const productPromises = favoriteIds.map(id =>
           axios.get(`${API_BASE}/products/${id}`).catch(() => null)
         );
         const responses = await Promise.all(productPromises);
@@ -319,7 +319,7 @@ export class ViewController {
           .filter(res => res !== null)
           .map(res => res!.data.data.product);
       }
-      
+
       res.render('pages/favorites', {
         title: 'Favoritos - PowerFit',
         products
@@ -367,7 +367,7 @@ export class ViewController {
     try {
       const { data: response } = await axios.get(`${API_BASE}/products`);
       const products = response.data.products || [];
-      
+
       res.render('pages/admin-product', {
         title: 'Administrar Productos - PowerFit',
         products

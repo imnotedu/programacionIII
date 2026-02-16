@@ -11,6 +11,7 @@ import expressLayouts from 'express-ejs-layouts';
 import session from 'express-session';
 import flash from 'connect-flash';
 import compression from 'compression';
+import methodOverride from 'method-override';
 import { config } from './config/env';
 import { sessionConfig } from './config/session';
 import routes from './routes';
@@ -27,7 +28,7 @@ export function createApp(): Application {
   // Motor de plantillas EJS
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, '../views'));
-  
+
   // express-ejs-layouts
   app.use(expressLayouts);
   app.set('layout', 'layouts/main');
@@ -52,6 +53,21 @@ export function createApp(): Application {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+  // Method override para soportar DELETE/PUT desde formularios HTML
+  // Lee _method del body del form (hidden input) o del query string
+  app.use(methodOverride(function (req) {
+    // Primero intentar desde query string (funciona con multipart/form-data)
+    if (req.query && '_method' in req.query) {
+      return req.query._method as string;
+    }
+    // Luego intentar desde body (funciona con application/x-www-form-urlencoded)
+    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+      const method = req.body._method;
+      delete req.body._method;
+      return method;
+    }
+  }));
+
   // Cookie parser
   app.use(cookieParser());
 
@@ -66,20 +82,20 @@ export function createApp(): Application {
       if (filePath.endsWith('.css')) {
         // CSS: 1 año en producción, 1 día en desarrollo
         // Requisito: 15.1
-        res.setHeader('Cache-Control', config.nodeEnv === 'production' 
-          ? 'public, max-age=31536000, immutable' 
+        res.setHeader('Cache-Control', config.nodeEnv === 'production'
+          ? 'public, max-age=31536000, immutable'
           : 'public, max-age=86400');
       } else if (filePath.endsWith('.js')) {
         // JavaScript: 1 año en producción, 1 día en desarrollo
         // Requisito: 15.3
-        res.setHeader('Cache-Control', config.nodeEnv === 'production' 
-          ? 'public, max-age=31536000, immutable' 
+        res.setHeader('Cache-Control', config.nodeEnv === 'production'
+          ? 'public, max-age=31536000, immutable'
           : 'public, max-age=86400');
       } else if (filePath.match(/\.(jpg|jpeg|png|gif|svg|webp|ico)$/)) {
         // Imágenes: 1 año en producción, 7 días en desarrollo
         // Requisito: 15.2
-        res.setHeader('Cache-Control', config.nodeEnv === 'production' 
-          ? 'public, max-age=31536000, immutable' 
+        res.setHeader('Cache-Control', config.nodeEnv === 'production'
+          ? 'public, max-age=31536000, immutable'
           : 'public, max-age=604800');
       }
     }
@@ -87,7 +103,7 @@ export function createApp(): Application {
 
   // Sesiones
   app.use(session(sessionConfig));
-  
+
   // Flash messages
   app.use(flash());
 
@@ -95,11 +111,11 @@ export function createApp(): Application {
   app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
     res.locals.isAuthenticated = !!req.session.user;
-    
+
     // Calculate cart count (total items, not unique products)
     const cartCount = req.session.cart?.reduce((sum, item) => sum + item.quantity, 0) || 0;
     res.locals.cartCount = cartCount;
-    
+
     res.locals.favorites = req.session.favorites || [];
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
@@ -149,7 +165,7 @@ export function createApp(): Application {
       req.session.visitCount = 0;
     }
     req.session.visitCount++;
-    
+
     res.json({
       success: true,
       message: 'Session is working!',

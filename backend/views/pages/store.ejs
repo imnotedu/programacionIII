@@ -1,169 +1,175 @@
-<%
-// Helper function to build filter URLs preserving existing filters
-function buildFilterUrl(newFilters) {
-  const params = new URLSearchParams();
-  
-  // Preserve existing filters
-  if (filters.search && !newFilters.hasOwnProperty('search')) {
-    params.set('search', filters.search);
-  }
-  if (filters.minPrice && !newFilters.hasOwnProperty('minPrice')) {
-    params.set('minPrice', filters.minPrice);
-  }
-  if (filters.maxPrice && !newFilters.hasOwnProperty('maxPrice')) {
-    params.set('maxPrice', filters.maxPrice);
-  }
-  if (filters.category && !newFilters.hasOwnProperty('category')) {
-    params.set('category', filters.category);
-  }
-  
-  // Apply new filters
-  Object.keys(newFilters).forEach(key => {
-    if (newFilters[key]) {
-      params.set(key, newFilters[key]);
-    }
-  });
-  
-  return params.toString();
-}
-%>
+<% function buildFilterUrl(newFilters) { 
+  var params = new URLSearchParams(); 
+  var allFilters = { 
+    search: filters.search,
+    category: filters.category 
+  };
+  Object.keys(allFilters).forEach(function(key) { 
+    if (newFilters.hasOwnProperty(key)) { 
+      if (newFilters[key]) {
+        params.set(key, newFilters[key]); 
+      } 
+    } else { 
+      if (allFilters[key]) { 
+        params.set(key, allFilters[key]); 
+      } 
+    } 
+  }); 
+  return params.toString(); 
+} %>
 
-<main class="flex-1 py-8 md:py-12">
-  <div class="container mx-auto px-4">
-    <!-- Page Header -->
-    <div class="mb-8">
-      <h1 class="section-title">Nuestra Tienda</h1>
-      <p class="text-muted-foreground mt-2">
-        Explora nuestra selección de suplementos deportivos
-      </p>
-    </div>
-
-    <!-- Filters -->
-    <form method="GET" action="/tienda" class="mb-8">
-      <div class="flex flex-col md:flex-row gap-4">
-        <!-- Search -->
-        <div class="flex-1">
-          <input
-            type="text"
-            name="search"
-            placeholder="Buscar productos..."
-            value="<%= filters.search || '' %>"
-            class="input-field"
-            aria-label="Buscar productos"
-          />
-        </div>
-
-        <!-- Price Range -->
-        <div class="flex gap-2">
-          <input
-            type="number"
-            name="minPrice"
-            placeholder="Precio mín."
-            value="<%= filters.minPrice || '' %>"
-            min="0"
-            step="0.01"
-            class="input-field w-32"
-            aria-label="Precio mínimo"
-          />
-          <input
-            type="number"
-            name="maxPrice"
-            placeholder="Precio máx."
-            value="<%= filters.maxPrice || '' %>"
-            min="0"
-            step="0.01"
-            class="input-field w-32"
-            aria-label="Precio máximo"
-          />
-        </div>
-
-        <!-- Search Button -->
-        <button type="submit" class="btn-primary px-6" aria-label="Aplicar filtros">
-          Buscar
-        </button>
-        
-        <!-- Clear Filters Button -->
-        <% if (filters.search || filters.minPrice || filters.maxPrice || filters.category) { %>
-          <a href="/tienda" class="btn-secondary px-6 flex items-center justify-center" aria-label="Limpiar filtros">
-            Limpiar
-          </a>
-        <% } %>
-      </div>
-
-      <!-- Hidden field to preserve category filter -->
-      <% if (filters.category) { %>
-        <input type="hidden" name="category" value="<%= filters.category %>" />
-      <% } %>
-    </form>
-
-    <!-- Category Filter - Desktop -->
-    <div class="hidden md:flex gap-2 flex-wrap mb-6">
-      <a href="/tienda?<%= buildFilterUrl({}) %>" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 <%= !filters.category || filters.category === 'Todos' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' %>">
-        Todos
-      </a>
-      <a href="/tienda?<%= buildFilterUrl({ category: 'Proteínas' }) %>" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 <%= filters.category === 'Proteínas' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' %>">
-        Proteínas
-      </a>
-      <a href="/tienda?<%= buildFilterUrl({ category: 'Pre-Entreno' }) %>" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 <%= filters.category === 'Pre-Entreno' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' %>">
-        Pre-Entreno
-      </a>
-      <a href="/tienda?<%= buildFilterUrl({ category: 'Creatina' }) %>" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 <%= filters.category === 'Creatina' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' %>">
-        Creatina
-      </a>
-      <a href="/tienda?<%= buildFilterUrl({ category: 'Vitaminas' }) %>" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 <%= filters.category === 'Vitaminas' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' %>">
-        Vitaminas
-      </a>
-      <a href="/tienda?<%= buildFilterUrl({ category: 'Aminoácidos' }) %>" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 <%= filters.category === 'Aminoácidos' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' %>">
-        Aminoácidos
-      </a>
-    </div>
-
-    <!-- Category Filter - Mobile -->
-    <div class="flex md:hidden gap-2 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide mb-6">
-      <a href="/tienda?<%= buildFilterUrl({}) %>" class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all duration-200 <%= !filters.category || filters.category === 'Todos' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
-        Todos
-      </a>
-      <a href="/tienda?<%= buildFilterUrl({ category: 'Proteínas' }) %>" class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all duration-200 <%= filters.category === 'Proteínas' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
-        Proteínas
-      </a>
-      <a href="/tienda?<%= buildFilterUrl({ category: 'Pre-Entreno' }) %>" class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all duration-200 <%= filters.category === 'Pre-Entreno' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
-        Pre-Entreno
-      </a>
-      <a href="/tienda?<%= buildFilterUrl({ category: 'Creatina' }) %>" class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all duration-200 <%= filters.category === 'Creatina' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
-        Creatina
-      </a>
-      <a href="/tienda?<%= buildFilterUrl({ category: 'Vitaminas' }) %>" class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all duration-200 <%= filters.category === 'Vitaminas' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
-        Vitaminas
-      </a>
-      <a href="/tienda?<%= buildFilterUrl({ category: 'Aminoácidos' }) %>" class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all duration-200 <%= filters.category === 'Aminoácidos' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
-        Aminoácidos
-      </a>
-    </div>
-
-    <!-- Results count -->
-    <p class="text-sm text-muted-foreground mb-6">
-      Mostrando <%= products.length %> producto<%= products.length !== 1 ? 's' : '' %>
-    </p>
-
-    <!-- Products Grid -->
-    <% if (products.length > 0) { %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <% products.forEach(function(product) { %>
-          <%- include('../partials/product-card', { product: product, favorites: favorites || [] }) %>
-        <% }); %>
-      </div>
-    <% } else { %>
-      <div class="text-center py-16">
-        <p class="text-muted-foreground text-lg">
-          No se encontraron productos
+  <main class="flex-1 py-8 md:py-12">
+    <div class="container mx-auto px-4">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="section-title">Nuestra Tienda</h1>
+        <p class="text-muted-foreground mt-2">
+          Explora nuestra selección de suplementos deportivos
         </p>
-        <a href="/tienda" class="mt-4 inline-block text-primary font-medium hover:underline">
-          Limpiar filtros
-        </a>
       </div>
-    <% } %>
-  </div>
-</main>
 
-<script src="/js/cart.js"></script>
-<script src="/js/favorites.js"></script>
+      <!-- Search and Filters -->
+      <form method="GET" action="/tienda" class="mb-8">
+        <div class="flex flex-col sm:flex-row gap-3">
+          <!-- Search with autocomplete -->
+          <div class="flex-1 relative">
+            <input 
+              type="text" 
+              id="search-input"
+              name="search" 
+              placeholder="Buscar productos..." 
+              value="<%= filters.search || '' %>"
+              class="input-field" 
+              aria-label="Buscar productos"
+              autocomplete="off"
+            />
+            
+            <!-- Autocomplete dropdown -->
+            <div id="search-suggestions" class="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg shadow-lg hidden max-h-80 overflow-y-auto">
+              <!-- Suggestions will be inserted here by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Category Selector -->
+          <div class="sm:w-48">
+            <select 
+              name="category" 
+              class="input-field w-full"
+              aria-label="Filtrar por categoría"
+            >
+              <option value="">Todas las categorías</option>
+              <option value="Proteínas" <%= filters.category === 'Proteínas' ? 'selected' : '' %>>Proteínas</option>
+              <option value="Pre-Entreno" <%= filters.category === 'Pre-Entreno' ? 'selected' : '' %>>Pre-Entreno</option>
+              <option value="Creatina" <%= filters.category === 'Creatina' ? 'selected' : '' %>>Creatina</option>
+              <option value="Vitaminas" <%= filters.category === 'Vitaminas' ? 'selected' : '' %>>Vitaminas</option>
+              <option value="Aminoácidos" <%= filters.category === 'Aminoácidos' ? 'selected' : '' %>>Aminoácidos</option>
+              <option value="Ganadores" <%= filters.category === 'Ganadores' ? 'selected' : '' %>>Ganadores</option>
+              <option value="Rendimiento" <%= filters.category === 'Rendimiento' ? 'selected' : '' %>>Rendimiento</option>
+            </select>
+          </div>
+
+          <!-- Search Button -->
+          <button type="submit" class="btn-primary px-6 whitespace-nowrap" aria-label="Aplicar filtros">
+            Buscar
+          </button>
+
+          <!-- Clear Filters Button -->
+          <% if (filters.search || filters.category) { %>
+            <a href="/tienda" class="btn-secondary px-6 flex items-center justify-center whitespace-nowrap" aria-label="Limpiar filtros">
+              Limpiar
+            </a>
+          <% } %>
+        </div>
+      </form>
+
+      <!-- Results count -->
+      <p class="text-sm text-muted-foreground mb-6">
+        Mostrando <%= products.length %> producto<%= products.length !==1 ? 's' : '' %>
+      </p>
+
+      <!-- Products Grid -->
+      <% if (products.length> 0) { %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <% products.forEach(function(product) { %>
+            <%- include('../partials/product-card', { product: product }) %>
+              <% }); %>
+        </div>
+        <% } else { %>
+          <div class="text-center py-16">
+            <p class="text-muted-foreground text-lg">
+              No se encontraron productos
+            </p>
+            <a href="/tienda" class="mt-4 inline-block text-primary font-medium hover:underline">
+              Limpiar filtros
+            </a>
+          </div>
+          <% } %>
+    </div>
+  </main>
+
+  <script src="/js/cart.js"></script>
+  <script>
+    // Búsqueda en tiempo real con sugerencias
+    const searchInput = document.getElementById('search-input');
+    const suggestionsContainer = document.getElementById('search-suggestions');
+    let debounceTimer;
+
+    searchInput.addEventListener('input', function(e) {
+      const query = e.target.value.trim();
+      
+      // Limpiar timer anterior
+      clearTimeout(debounceTimer);
+      
+      // Si el query es muy corto, ocultar sugerencias
+      if (query.length < 2) {
+        suggestionsContainer.classList.add('hidden');
+        return;
+      }
+      
+      // Debounce de 300ms
+      debounceTimer = setTimeout(async () => {
+        try {
+          const response = await fetch(`/api/products/search?q=${encodeURIComponent(query)}`);
+          const data = await response.json();
+          
+          if (data.success && data.data.products.length > 0) {
+            displaySuggestions(data.data.products);
+          } else {
+            suggestionsContainer.classList.add('hidden');
+          }
+        } catch (error) {
+          console.error('Error al buscar productos:', error);
+          suggestionsContainer.classList.add('hidden');
+        }
+      }, 300);
+    });
+
+    function displaySuggestions(products) {
+      suggestionsContainer.innerHTML = products.map(product => `
+        <a href="/producto/${product.id}" class="flex items-center gap-3 p-3 hover:bg-muted transition-colors border-b border-border last:border-b-0">
+          <img src="${product.image}" alt="${product.name}" class="w-12 h-12 object-cover rounded bg-muted" />
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-foreground text-sm line-clamp-1">${product.name}</p>
+            <p class="text-xs text-muted-foreground">${product.category}</p>
+          </div>
+          <p class="font-bold text-primary whitespace-nowrap">$${product.price.toFixed(2)}</p>
+        </a>
+      `).join('');
+      
+      suggestionsContainer.classList.remove('hidden');
+    }
+
+    // Cerrar sugerencias al hacer click fuera
+    document.addEventListener('click', function(e) {
+      if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+        suggestionsContainer.classList.add('hidden');
+      }
+    });
+
+    // Mostrar sugerencias al hacer focus si hay texto
+    searchInput.addEventListener('focus', function() {
+      if (this.value.trim().length >= 2 && suggestionsContainer.children.length > 0) {
+        suggestionsContainer.classList.remove('hidden');
+      }
+    });
+  </script>

@@ -1,112 +1,86 @@
-<%
-  // Determine if product is in favorites (if favorites array is available)
-  const isFavorite = typeof favorites !== 'undefined' && favorites && favorites.includes(product.id);
-%>
-
 <div class="card-product bg-card group">
-  <!-- Image Container -->
-  <div class="relative aspect-square overflow-hidden bg-muted">
-    <a href="/producto/<%= product.id %>">
-      <img
-        src="<%= product.image %>"
-        alt="<%= product.name %>"
-        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        loading="lazy"
-        onerror="this.src='/placeholder.svg'"
-      >
-    </a>
-    
-    <!-- Badges -->
-    <div class="absolute top-3 left-3 flex flex-col gap-2">
-      <% if (product.isNew) { %>
-        <span class="badge-new">Nuevo</span>
-      <% } %>
-      <% if (product.isSale) { %>
-        <span class="badge-sale">Oferta</span>
-      <% } %>
-    </div>
+    <!-- Image Container -->
+    <div class="relative aspect-square overflow-hidden bg-muted">
+      <a href="/producto/<%= product.id %>">
+        <img src="<%= product.image %>" alt="<%= product.name %>"
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy"
+          onerror="this.src='/placeholder.svg'">
+      </a>
 
-    <!-- Quick Add Button - Mobile visible, Desktop on hover -->
-    <button
-      class="absolute bottom-3 right-3 w-10 h-10 bg-primary text-primary-foreground rounded-full 
+      <!-- Badges -->
+      <div class="absolute top-3 left-3 flex flex-col gap-2">
+        <% if (product.isNew) { %>
+          <span class="badge-new">Nuevo</span>
+          <% } %>
+            <% if (product.isSale) { %>
+              <span class="badge-sale">Oferta</span>
+              <% } %>
+      </div>
+
+      <!-- Quick Add Button - Mobile visible, Desktop on hover -->
+      <button class="absolute bottom-3 right-3 w-10 h-10 bg-primary text-primary-foreground rounded-full 
              flex items-center justify-center shadow-lg transition-all duration-300
              md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0
-             hover:scale-110 active:scale-95 add-to-cart-btn"
-      data-product-id="<%= product.id %>"
-      aria-label="Agregar <%= product.name %> al carrito"
-    >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-      </svg>
-    </button>
-
-    <!-- Favorite Button -->
-    <button
-      class="absolute top-3 right-3 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md 
-             hover:scale-110 transition-transform favorite-btn"
-      data-product-id="<%= product.id %>"
-      data-is-favorite="<%= isFavorite %>"
-      aria-label="<%= isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' %>"
-    >
-      <svg class="w-5 h-5 <%= isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400' %>" 
-           fill="<%= isFavorite ? 'currentColor' : 'none' %>" 
-           stroke="currentColor" 
-           viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-      </svg>
-    </button>
-  </div>
-
-  <!-- Content -->
-  <div class="p-4">
-    <span class="text-xs text-primary font-medium uppercase tracking-wide">
-      <%= product.category %>
-    </span>
-    
-    <h3 class="font-semibold text-foreground mt-1 line-clamp-1">
-      <a href="/producto/<%= product.id %>" class="hover:text-primary transition-colors">
-        <%= product.name %>
-      </a>
-    </h3>
-    
-    <p class="text-sm text-muted-foreground mt-1 line-clamp-2">
-      <%= product.description %>
-    </p>
-
-    <!-- Rating placeholder -->
-    <div class="flex items-center gap-1 mt-2">
-      <% for (let i = 0; i < 5; i++) { %>
-        <svg class="w-3.5 h-3.5 <%= i < 4 ? 'text-warning fill-warning' : 'text-muted' %>" 
-             fill="<%= i < 4 ? 'currentColor' : 'none' %>" 
-             stroke="currentColor" 
-             viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+             hover:scale-110 active:scale-95 add-to-cart-btn" data-product-id="<%= product.id %>"
+        aria-label="Agregar <%= product.name %> al carrito">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+          </path>
         </svg>
-      <% } %>
-      <span class="text-xs text-muted-foreground ml-1">(4.0)</span>
+      </button>
     </div>
 
-    <!-- Price -->
-    <div class="flex items-center gap-2 mt-3">
-      <span class="text-xl font-bold text-foreground">
-        $<%= product.price.toFixed(2) %>
+    <!-- Content -->
+    <div class="p-4">
+      <span class="text-xs text-primary font-medium uppercase tracking-wide">
+        <%= product.category %>
       </span>
-      <% if (product.originalPrice) { %>
-        <span class="text-sm text-muted-foreground line-through">
-          $<%= product.originalPrice.toFixed(2) %>
-        </span>
-      <% } %>
-    </div>
 
-    <!-- Desktop Add to Cart Button -->
-    <button
-      class="hidden md:flex w-full mt-4 btn-primary justify-center items-center gap-2 py-2.5 add-to-cart-btn"
-      data-product-id="<%= product.id %>"
-    >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-      </svg>
-      Agregar al carrito
-    </button>
+      <h3 class="font-semibold text-foreground mt-1 line-clamp-1">
+        <a href="/producto/<%= product.id %>" class="hover:text-primary transition-colors">
+          <%= product.name %>
+        </a>
+      </h3>
+
+      <p class="text-sm text-muted-foreground mt-1 line-clamp-2">
+        <%= product.description %>
+      </p>
+
+      <!-- Rating placeholder -->
+      <div class="flex items-center gap-1 mt-2">
+        <% for (let i=0; i < 5; i++) { %>
+          <svg class="w-3.5 h-3.5 <%= i < 4 ? 'text-warning fill-warning' : 'text-muted' %>"
+            fill="<%= i < 4 ? 'currentColor' : 'none' %>" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
+            </path>
+          </svg>
+          <% } %>
+            <span class="text-xs text-muted-foreground ml-1">(4.0)</span>
+      </div>
+
+      <!-- Price -->
+      <div class="flex items-center gap-2 mt-3">
+        <span class="text-xl font-bold text-foreground">
+          $<%= product.price.toFixed(2) %>
+        </span>
+        <% if (product.originalPrice) { %>
+          <span class="text-sm text-muted-foreground line-through">
+            $<%= product.originalPrice.toFixed(2) %>
+          </span>
+          <% } %>
+      </div>
+
+      <!-- Desktop Add to Cart Button -->
+      <button class="hidden md:flex w-full mt-4 btn-primary justify-center items-center gap-2 py-2.5 add-to-cart-btn"
+        data-product-id="<%= product.id %>">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+          </path>
+        </svg>
+        Agregar al carrito
+      </button>
+    </div>
   </div>
-</div>

@@ -26,21 +26,34 @@ export function authenticate(
   next: NextFunction
 ): void {
   try {
-    // Obtener token del header
+    // 1. Verificar si hay sesión activa (para llamadas desde el mismo dominio/vistas)
+    // El middleware de session debe haberse ejecutado antes
+    if (req.session && req.session.user) {
+      // Mapear usuario de sesión a estructura compatible con JWT si es necesario
+      // O simplemente permitir el paso ya que requireAdmin verificará permisos
+      req.user = {
+        userId: req.session.user.id,
+        email: req.session.user.email,
+        level: req.session.user.isAdmin ? 'admin' : 'usuario'
+      };
+      return next();
+    }
+
+    // 2. Si no hay sesión, buscar token JWT (para API REST externa)
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new AuthenticationError('Token no proporcionado');
     }
 
     const token = authHeader.substring(7); // Remover 'Bearer '
-    
+
     // Verificar token
     const payload = verifyToken(token);
-    
+
     // Agregar usuario al request
     req.user = payload;
-    
+
     next();
   } catch (error) {
     next(new AuthenticationError('Token inválido o expirado'));

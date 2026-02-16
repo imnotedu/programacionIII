@@ -71,6 +71,11 @@ export async function addToCart(
       throw new NotFoundError('Producto no encontrado');
     }
 
+    // VALIDACIÓN: Verificar que hay stock disponible
+    if (product.stock === 0) {
+      throw new ConflictError('Producto agotado. No hay unidades disponibles.');
+    }
+
     // Buscar si el producto ya está en el carrito
     const existingItemIndex = req.session.cart!.findIndex(
       item => item.productId === data.productId
@@ -82,14 +87,14 @@ export async function addToCart(
 
       // Verificar stock
       if (newQuantity > product.stock) {
-        throw new ConflictError(`Stock insuficiente. Disponible: ${product.stock}`);
+        throw new ConflictError(`Stock insuficiente. Disponible: ${product.stock} unidades`);
       }
 
       req.session.cart![existingItemIndex].quantity = newQuantity;
     } else {
       // Verificar stock
       if (data.quantity > product.stock) {
-        throw new ConflictError(`Stock insuficiente. Disponible: ${product.stock}`);
+        throw new ConflictError(`Stock insuficiente. Disponible: ${product.stock} unidades`);
       }
 
       // Agregar nuevo item

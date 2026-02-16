@@ -5,13 +5,15 @@
  */
 
 import { Router } from 'express';
+import { upload } from '../middleware/upload';
 import {
     createProduct,
     getAllProducts,
     getProductByCode,
     getProductById,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    searchProducts
 } from '../controllers/product.controller';
 import { authenticate, requireAdmin } from '../middleware/auth';
 
@@ -23,6 +25,13 @@ const router = Router();
  * Público
  */
 router.get('/', getAllProducts);
+
+/**
+ * GET /api/products/search
+ * Buscar productos (autocomplete)
+ * Público
+ */
+router.get('/search', searchProducts);
 
 /**
  * GET /api/products/code/:code
@@ -43,14 +52,14 @@ router.get('/:id', getProductById);
  * Crear un nuevo producto
  * Requiere: Autenticación + Admin
  */
-router.post('/', authenticate, requireAdmin, createProduct);
+router.post('/', authenticate, requireAdmin, upload.single('image'), createProduct);
 
 /**
  * PUT /api/products/:id
  * Actualizar un producto
  * Requiere: Autenticación + Admin
  */
-router.put('/:id', authenticate, requireAdmin, updateProduct);
+router.put('/:id', authenticate, requireAdmin, upload.single('image'), updateProduct);
 
 /**
  * DELETE /api/products/:id

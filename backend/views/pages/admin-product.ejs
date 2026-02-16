@@ -1,8 +1,5 @@
 <main class="flex-1 container mx-auto px-4 py-8">
-  <a
-    href="/tienda"
-    class="flex items-center text-muted-foreground hover:text-foreground mb-6"
-  >
+  <a href="/tienda" class="flex items-center text-muted-foreground hover:text-foreground mb-6">
     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
     </svg>
@@ -24,46 +21,59 @@
       <form action="/api/products" method="POST" class="space-y-4" enctype="multipart/form-data">
         <div>
           <label class="text-sm font-medium mb-1 block">Nombre del Producto</label>
-          <input
-            name="name"
-            class="input-field w-full"
-            placeholder="Ej. Ultra Whey Pro"
-            required
+          <input name="name" class="input-field w-full" placeholder="Ej. Ultra Whey Pro" required />
+        </div>
+
+        <div>
+          <label class="text-sm font-medium mb-1 block">Código del Producto</label>
+          <input 
+            name="code" 
+            class="input-field w-full font-mono" 
+            placeholder="Ej. WP-001" 
+            required 
+            pattern="[A-Za-z0-9-]+"
+            title="Solo letras, números y guiones"
+            style="text-transform: uppercase;"
           />
+          <p class="text-xs text-muted-foreground mt-1">
+            Código único para identificar el producto (se convertirá a mayúsculas)
+          </p>
         </div>
 
         <div>
           <label class="text-sm font-medium mb-1 block">Descripción Corta</label>
-          <textarea
-            name="description"
-            class="input-field w-full min-h-[80px]"
-            placeholder="Breve descripción..."
-            required
-          ></textarea>
+          <textarea name="description" class="input-field w-full min-h-[80px]" placeholder="Breve descripción..."
+            required></textarea>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-3 gap-4">
           <div>
             <label class="text-sm font-medium mb-1 block">Precio ($)</label>
-            <input
-              type="number"
-              step="0.01"
-              name="price"
-              class="input-field w-full"
-              placeholder="0.00"
-              required
-            />
+            <input type="number" step="0.01" name="price" class="input-field w-full" placeholder="0.00" required />
             <p class="text-xs text-muted-foreground mt-1">
               Precio regular del producto
             </p>
           </div>
           <div>
-            <label class="text-sm font-medium mb-1 block">Categoría</label>
-            <select
-              name="category"
-              class="input-field w-full"
+            <label class="text-sm font-medium mb-1 block">Stock</label>
+            <input 
+              type="number" 
+              name="stock" 
+              class="input-field w-full" 
+              placeholder="0" 
+              min="0"
+              step="1"
+              value="0"
               required
-            >
+              oninput="this.value = Math.max(0, parseInt(this.value) || 0)"
+            />
+            <p class="text-xs text-muted-foreground mt-1">
+              Unidades disponibles
+            </p>
+          </div>
+          <div>
+            <label class="text-sm font-medium mb-1 block">Categoría</label>
+            <select name="category" class="input-field w-full" required>
               <option value="Proteínas">Proteínas</option>
               <option value="Rendimiento">Rendimiento</option>
               <option value="Pre-entreno">Pre-entreno</option>
@@ -74,91 +84,46 @@
           </div>
         </div>
 
-        <!-- Opciones de etiquetas -->
-        <div class="space-y-3 p-4 bg-muted/50 rounded-lg">
-          <label class="text-sm font-medium block">Etiquetas del Producto</label>
-
-          <div class="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="isNew"
-              name="isNew"
-              value="true"
-              class="w-4 h-4 text-primary border-border rounded focus:ring-primary"
-            />
-            <label for="isNew" class="text-sm cursor-pointer">
-              Marcar como <span class="badge-new">Nuevo</span>
-            </label>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="isSale"
-              name="isSale"
-              value="true"
-              class="w-4 h-4 text-primary border-border rounded focus:ring-primary"
-            />
-            <label for="isSale" class="text-sm cursor-pointer">
-              Marcar como <span class="badge-sale">Oferta</span>
-            </label>
-          </div>
-
-          <div id="sale-price-container" class="mt-3 hidden">
-            <label class="text-sm font-medium mb-1 block">Precio de Oferta ($)</label>
-            <input
-              type="number"
-              step="0.01"
-              name="salePrice"
-              class="input-field w-full"
-              placeholder="0.00"
-            />
-            <p class="text-xs text-muted-foreground mt-1">
-              Precio con descuento (debe ser menor al precio regular)
-            </p>
-          </div>
-        </div>
-
         <!-- Sección de carga de imagen -->
         <div>
           <label class="text-sm font-medium mb-2 block">Imagen del Producto</label>
-          <div class="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors">
-            <input
-              type="file"
-              id="image-upload"
-              name="image"
-              accept="image/*"
-              class="hidden"
-              required
-            />
-            <label
-              for="image-upload"
-              class="cursor-pointer flex flex-col items-center gap-2"
-            >
-              <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          <div class="border-2 border-dashed border-border rounded-lg overflow-hidden hover:border-primary transition-colors relative">
+            <!-- Preview de imagen (oculto inicialmente) -->
+            <div id="image-preview-container" class="hidden relative">
+              <img id="preview-img" src="" alt="Vista previa" class="w-full h-64 object-cover" />
+              <!-- Botón X para quitar imagen (siempre visible) -->
+              <button 
+                type="button" 
+                id="remove-image-btn"
+                class="absolute top-2 right-2 w-8 h-8 bg-destructive text-white rounded-full flex items-center justify-center hover:bg-destructive/90 hover:scale-110 transition-all shadow-lg"
+                title="Quitar imagen"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
-              </div>
-              <div>
-                <p class="text-sm font-medium text-foreground">
-                  Subir imagen
-                </p>
-                <p class="text-xs text-muted-foreground mt-1">
-                  PNG, JPG, WEBP hasta 5MB
-                </p>
-              </div>
-            </label>
-          </div>
-          <div id="image-preview" class="mt-4 hidden">
-            <img id="preview-img" src="" alt="Vista previa" class="w-full h-48 object-cover rounded-lg" />
+              </button>
+            </div>
+            
+            <!-- Área de subir (visible cuando no hay imagen) -->
+            <div id="upload-area" class="p-6 text-center">
+              <input type="file" id="image-upload" name="image" accept="image/*" class="hidden" required />
+              <label for="image-upload" class="cursor-pointer flex flex-col items-center gap-2">
+                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                  <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-foreground">Subir imagen</p>
+                  <p class="text-xs text-muted-foreground mt-1">PNG, JPG, WEBP hasta 5MB</p>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
 
-        <button
-          type="submit"
-          class="btn-primary w-full"
-        >
+        <button type="submit" class="btn-primary w-full">
           Publicar Producto
         </button>
       </form>
@@ -169,77 +134,293 @@
       <h2 class="text-xl font-semibold mb-6">Inventario Actual (<%= products.length %>)</h2>
       <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
         <% products.forEach(function(product) { %>
-          <div class="flex items-center justify-between p-3 border rounded-lg bg-background hover:bg-muted/50 transition-colors">
+          <div
+            class="flex items-center justify-between p-3 border rounded-lg bg-background hover:bg-muted/50 transition-colors">
             <div class="flex items-center gap-3 flex-1">
-              <img
-                src="<%= product.image %>"
-                alt="<%= product.name %>"
-                class="w-12 h-12 rounded object-cover bg-gray-100"
-                loading="lazy"
-              />
+              <img src="<%= product.image %>" alt="<%= product.name %>"
+                class="w-12 h-12 rounded object-cover bg-gray-100" loading="lazy" />
               <div class="flex-1">
                 <div class="flex items-center gap-2">
-                  <p class="font-medium text-sm"><%= product.name %></p>
+                  <p class="font-medium text-sm">
+                    <%= product.name %>
+                  </p>
                   <% if (product.isNew) { %>
                     <span class="badge-new text-[10px] px-1.5 py-0.5">Nuevo</span>
-                  <% } %>
-                  <% if (product.isSale) { %>
-                    <span class="badge-sale text-[10px] px-1.5 py-0.5">Oferta</span>
-                  <% } %>
+                    <% } %>
+                      <% if (product.isSale) { %>
+                        <span class="badge-sale text-[10px] px-1.5 py-0.5">Oferta</span>
+                        <% } %>
                 </div>
-                <div class="flex items-center gap-2 mt-1">
-                  <p class="text-xs font-semibold text-foreground">$<%= product.price.toFixed(2) %></p>
+                <p class="text-xs text-muted-foreground mt-0.5">Código: <span class="font-mono"><%= product.code %></span></p>
+                <div class="flex items-center gap-3 mt-1">
+                  <p class="text-xs font-semibold text-foreground">$<%= product.price.toFixed(2) %>
+                  </p>
                   <% if (product.originalPrice) { %>
-                    <p class="text-xs text-muted-foreground line-through">$<%= product.originalPrice.toFixed(2) %></p>
+                    <p class="text-xs text-muted-foreground line-through">$<%= product.originalPrice.toFixed(2) %>
+                    </p>
                     <p class="text-xs text-primary font-medium">
                       -<%= Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) %>%
                     </p>
-                  <% } %>
+                    <% } %>
+                  <!-- Stock indicator -->
+                  <div class="flex items-center gap-1">
+                    <svg class="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                    <p class="text-xs text-muted-foreground">
+                      Stock: <span class="font-medium <%= product.stock === 0 ? 'text-destructive' : product.stock < 10 ? 'text-warning' : 'text-success' %>">
+                        <%= product.stock %>
+                      </span>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <form action="/api/products/<%= product.id %>" method="POST" class="inline" onsubmit="return confirm('¿Eliminar este producto?');">
+              <!-- Botón Editar -->
+              <button
+                type="button"
+                class="text-primary hover:bg-primary/10 p-2 rounded-full transition-colors edit-product-btn"
+                title="Editar producto"
+                data-product-id="<%= product.id %>"
+                data-product-name="<%= product.name %>"
+                data-product-code="<%= product.code %>"
+                data-product-price="<%= product.price %>"
+                data-product-stock="<%= product.stock %>"
+                data-product-description="<%= product.description %>"
+                data-product-category="<%= product.category %>"
+                data-product-image="<%= product.image %>"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+              </button>
+              
+              <!-- Botón Eliminar -->
+              <form action="/api/products/<%= product.id %>" method="POST" class="inline"
+                onsubmit="return confirm('¿Eliminar este producto?');">
                 <input type="hidden" name="_method" value="DELETE" />
-                <button
-                  type="submit"
+                <button type="submit"
                   class="text-destructive hover:bg-destructive/10 p-2 rounded-full transition-colors"
-                  title="Eliminar producto"
-                >
+                  title="Eliminar producto">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                    </path>
                   </svg>
                 </button>
               </form>
             </div>
           </div>
-        <% }); %>
+          <% }); %>
       </div>
     </div>
   </div>
 </main>
 
-<script>
-// Toggle sale price field
-document.getElementById('isSale').addEventListener('change', function() {
-  const container = document.getElementById('sale-price-container');
-  if (this.checked) {
-    container.classList.remove('hidden');
-  } else {
-    container.classList.add('hidden');
-  }
-});
+<!-- Modal de Edición -->
+<div id="edit-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-card border border-border rounded-xl shadow-2xl w-full max-w-md max-h-[75vh] overflow-hidden flex flex-col">
+    <div class="bg-card border-b border-border px-3 py-2.5 flex items-center justify-between flex-shrink-0">
+      <h2 class="text-base font-semibold flex items-center gap-2">
+        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+        </svg>
+        Editar Producto
+      </h2>
+      <button type="button" id="close-modal-btn" class="text-muted-foreground hover:text-foreground transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
 
-// Image preview
-document.getElementById('image-upload').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById('preview-img').src = e.target.result;
-      document.getElementById('image-preview').classList.remove('hidden');
-    };
-    reader.readAsDataURL(file);
+    <form id="edit-product-form" method="POST" enctype="multipart/form-data" class="p-3 space-y-2.5 overflow-y-auto flex-1">
+      <input type="hidden" id="edit-product-id" name="productId" />
+
+      <div>
+        <label class="text-xs font-medium mb-1 block">Nombre del Producto</label>
+        <input id="edit-name" name="name" class="input-field w-full text-sm" required />
+      </div>
+
+      <div>
+        <label class="text-xs font-medium mb-1 block">Código del Producto</label>
+        <input 
+          id="edit-code" 
+          name="code" 
+          class="input-field w-full font-mono text-sm" 
+          required 
+          pattern="[A-Za-z0-9-]+"
+          style="text-transform: uppercase;"
+          disabled
+          title="El código no se puede modificar"
+        />
+        <p class="text-[10px] text-muted-foreground mt-0.5">
+          El código no se puede modificar
+        </p>
+      </div>
+
+      <div>
+        <label class="text-xs font-medium mb-1 block">Descripción</label>
+        <textarea id="edit-description" name="description" class="input-field w-full min-h-[50px] text-sm" required></textarea>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2">
+        <div>
+          <label class="text-xs font-medium mb-1 block">Precio ($)</label>
+          <input type="number" step="0.01" id="edit-price" name="price" class="input-field w-full text-sm" required />
+        </div>
+        <div>
+          <label class="text-xs font-medium mb-1 block">Stock</label>
+          <input 
+            type="number" 
+            id="edit-stock" 
+            name="stock" 
+            class="input-field w-full text-sm" 
+            min="0"
+            step="1"
+            required
+            oninput="this.value = Math.max(0, parseInt(this.value) || 0)"
+          />
+        </div>
+        <div>
+          <label class="text-xs font-medium mb-1 block">Categoría</label>
+          <select id="edit-category" name="category" class="input-field w-full text-sm" required>
+            <option value="Proteínas">Proteínas</option>
+            <option value="Rendimiento">Rendimiento</option>
+            <option value="Pre-entreno">Pre-entreno</option>
+            <option value="Aminoácidos">Aminoácidos</option>
+            <option value="Ganadores">Ganadores</option>
+            <option value="Vitaminas">Vitaminas</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs font-medium mb-1 block">Imagen Actual</label>
+        <div class="border border-border rounded-lg p-2 cursor-pointer hover:border-primary transition-colors" onclick="document.getElementById('edit-current-image').click()">
+          <img id="edit-current-image" src="" alt="Imagen actual" class="w-full h-20 object-cover rounded cursor-pointer" onclick="window.open(this.src, '_blank')" title="Click para ver en tamaño completo" />
+        </div>
+        <p class="text-[10px] text-muted-foreground mt-0.5">
+          Click en la imagen para verla completa. Para cambiarla, elimina y crea uno nuevo.
+        </p>
+      </div>
+
+      <div class="flex gap-2 pt-2 flex-shrink-0">
+        <button type="submit" class="btn-primary flex-1 text-sm py-2">
+          Guardar
+        </button>
+        <button type="button" id="cancel-edit-btn" class="btn-secondary flex-1 text-sm py-2">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Variables
+  const imageUpload = document.getElementById('image-upload');
+  const previewContainer = document.getElementById('image-preview-container');
+  const previewImg = document.getElementById('preview-img');
+  const uploadArea = document.getElementById('upload-area');
+  const removeBtn = document.getElementById('remove-image-btn');
+
+  // Mostrar preview al seleccionar imagen
+  imageUpload.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      // Validar tamaño (5MB máximo)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('La imagen no debe superar 5MB');
+        imageUpload.value = '';
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        previewContainer.classList.remove('hidden');
+        uploadArea.classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Quitar imagen
+  removeBtn.addEventListener('click', function() {
+    imageUpload.value = '';
+    previewImg.src = '';
+    previewContainer.classList.add('hidden');
+    uploadArea.classList.remove('hidden');
+  });
+
+  // Convertir código a mayúsculas en tiempo real
+  const codeInput = document.querySelector('input[name="code"]');
+  if (codeInput) {
+    codeInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
+    });
   }
-});
+
+  // ===== MODAL DE EDICIÓN =====
+  const editModal = document.getElementById('edit-modal');
+  const editForm = document.getElementById('edit-product-form');
+  const closeModalBtn = document.getElementById('close-modal-btn');
+  const cancelEditBtn = document.getElementById('cancel-edit-btn');
+  const editButtons = document.querySelectorAll('.edit-product-btn');
+
+  // Abrir modal al hacer clic en editar
+  editButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const productId = this.dataset.productId;
+      const productName = this.dataset.productName;
+      const productCode = this.dataset.productCode;
+      const productPrice = this.dataset.productPrice;
+      const productStock = this.dataset.productStock;
+      const productDescription = this.dataset.productDescription;
+      const productCategory = this.dataset.productCategory;
+      const productImage = this.dataset.productImage;
+
+      // Llenar el formulario
+      document.getElementById('edit-product-id').value = productId;
+      document.getElementById('edit-name').value = productName;
+      document.getElementById('edit-code').value = productCode;
+      document.getElementById('edit-price').value = productPrice;
+      document.getElementById('edit-stock').value = productStock;
+      document.getElementById('edit-description').value = productDescription;
+      document.getElementById('edit-category').value = productCategory;
+      document.getElementById('edit-current-image').src = productImage;
+
+      // Configurar action del formulario con _method en query string
+      editForm.action = `/api/products/${productId}?_method=PUT`;
+
+      // Mostrar modal
+      editModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  // Cerrar modal
+  function closeModal() {
+    editModal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  }
+
+  closeModalBtn.addEventListener('click', closeModal);
+  cancelEditBtn.addEventListener('click', closeModal);
+
+  // Cerrar modal al hacer clic fuera
+  editModal.addEventListener('click', function(e) {
+    if (e.target === editModal) {
+      closeModal();
+    }
+  });
+
+  // Cerrar modal con tecla Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !editModal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
 </script>

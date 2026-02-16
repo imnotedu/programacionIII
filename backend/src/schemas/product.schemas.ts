@@ -39,8 +39,8 @@ export const createProductSchema = z.object({
     imageUrl: z.union([
         z.string()
             .refine(
-                (val) => val === '' || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:image/'),
-                'La imagen debe ser una URL válida o una imagen en base64'
+                (val) => val === '' || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:image/') || val.startsWith('/'),
+                'La imagen debe ser una URL válida, una ruta local o una imagen en base64'
             ),
         z.undefined()
     ]).optional(),
@@ -78,8 +78,8 @@ export const updateProductSchema = z.object({
     imageUrl: z.union([
         z.string()
             .refine(
-                (val) => val === '' || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:image/'),
-                'La imagen debe ser una URL válida o una imagen en base64'
+                (val) => val === '' || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:image/') || val.startsWith('/'),
+                'La imagen debe ser una URL válida, una ruta local o una imagen en base64'
             ),
         z.undefined()
     ]).optional(),

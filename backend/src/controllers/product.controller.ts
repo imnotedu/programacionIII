@@ -21,6 +21,25 @@ export async function createProduct(
     next: NextFunction
 ): Promise<void> {
     try {
+        // Procesar imagen si existe
+        if (req.file) {
+            req.body.imageUrl = `/uploads/${req.file.filename}`;
+        }
+
+        // Convertir strings a números (multer multipart/form-data)
+        if (req.body.price) req.body.price = parseFloat(req.body.price);
+        if (req.body.stock) req.body.stock = parseInt(req.body.stock, 10);
+
+        // Auto-generar código si no viene del formulario
+        if (!req.body.code && req.body.name) {
+            req.body.code = req.body.name
+                .trim()
+                .toUpperCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^A-Z0-9\-]/g, '')
+                .substring(0, 50);
+        }
+
         // Validar datos
         const data = createProductSchema.parse(req.body);
 
@@ -57,9 +76,65 @@ export async function createProduct(
 
         const mappedProduct = mapProductFromDb(product);
 
+        // Detectar si viene de un formulario HTML o de la API
+        const isFormSubmit = !req.xhr && !req.headers.accept?.includes('application/json');
+        if (isFormSubmit) {
+            req.flash('success', 'Producto creado exitosamente');
+            res.redirect('/admin-products');
+            return;
+        }
+
         res.status(201).json({
             success: true,
             data: { product: mappedProduct }
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+/**
+ * Buscar productos (para autocomplete)
+ * GET /api/products/search
+ * Público
+ */
+export async function searchProducts(
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> {
+    try {
+        const { q } = req.query;
+
+        if (!q || typeof q !== 'string' || q.trim().length < 2) {
+            res.json({
+                success: true,
+                data: { products: [] }
+            });
+            return;
+        }
+
+        const searchTerm = `%${q.trim().toLowerCase()}%`;
+
+        // Buscar en nombre y descripción, limitar a 5 resultados
+        const productsRes = await query(`
+            SELECT id, name, description, price, imageUrl, category, stock
+            FROM products 
+            WHERE LOWER(name) LIKE $1 OR LOWER(description) LIKE $1
+            ORDER BY 
+                CASE 
+                    WHEN LOWER(name) LIKE $1 THEN 1
+                    ELSE 2
+                END,
+                name
+            LIMIT 5
+        `, [searchTerm]);
+
+        const products = productsRes.rows.map(mapProductFromDb);
+
+        res.json({
+            success: true,
+            data: { products }
         });
     } catch (error) {
         next(error);
@@ -164,6 +239,19 @@ export async function updateProduct(
 ): Promise<void> {
     try {
         const { id } = req.params;
+
+        // Procesar imagen si existe
+        if (req.file) {
+            req.body.imageUrl = `/uploads/${req.file.filename}`;
+        }
+
+        // Convertir strings a números si existen
+        if (req.body.price) req.body.price = parseFloat(req.body.price);
+        if (req.body.stock) req.body.stock = parseInt(req.body.stock, 10);
+
+        // Remover el código del body si viene (no se puede actualizar)
+        delete req.body.code;
+
         const data = updateProductSchema.parse(req.body);
 
         // Verificar que el producto existe
@@ -199,6 +287,14 @@ export async function updateProduct(
         const productRes = await query('SELECT * FROM products WHERE id = $1', [id]);
         const product = productRes.rows[0];
 
+        // Detectar si viene de un formulario HTML o de la API
+        const isFormSubmit = !req.xhr && !req.headers.accept?.includes('application/json');
+        if (isFormSubmit) {
+            req.flash('success', 'Producto actualizado exitosamente');
+            res.redirect('/admin-products');
+            return;
+        }
+
         res.json({
             success: true,
             data: { product: mapProductFromDb(product) }
@@ -230,6 +326,14 @@ export async function deleteProduct(
 
         // Eliminar producto
         await query('DELETE FROM products WHERE id = $1', [id]);
+
+        // Detectar si viene de un formulario HTML o de la API
+        const isFormSubmit = !req.xhr && !req.headers.accept?.includes('application/json');
+        if (isFormSubmit) {
+            req.flash('success', 'Producto eliminado exitosamente');
+            res.redirect('/admin-products');
+            return;
+        }
 
         res.json({
             success: true,

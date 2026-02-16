@@ -95,7 +95,7 @@ router.get('/checkout', requireAuth, (req, res) => viewController.checkout(req, 
  * Requiere autenticación y rol de administrador
  * Requisitos: 6.2, 6.4
  */
-router.get('/admin-products', requireAuth, requireAdmin, (req, res) => 
+router.get('/admin-products', requireAuth, requireAdmin, (req, res) =>
   viewController.adminProducts(req, res)
 );
 
